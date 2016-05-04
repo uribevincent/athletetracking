@@ -1,0 +1,81 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="athlete-result">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+    </style>
+
+   	<table>
+   		<thead>
+   			<tr>
+   				<td>Date</td>
+   				<td>Distance</td>
+   				<td>Compétition</td>
+   				<td>Résultat</td>
+   			</tr>
+   		</thead>
+		<tbody>
+			<template is="dom-repeat" items="[[results]]" as="result">
+				<tr>
+    				<td>{{result.date}}</td>
+    				<td>{{result.distance}}</td>
+	    			<td>{{result.name}}</td>
+	    			<td>{{result.time}}</td>
+    			</tr>
+			</template>
+		</tbody>
+	</table>
+</template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'athlete-result',
+
+        properties: {
+        	selected: {
+				type: Number,
+        		value: 0
+        	},
+          	athlete: {
+				type: String,
+				notify: true,
+				reflectToAttribute: true,
+				observer: "loadResults"
+			},
+			results: {
+				type: Object,
+				notify: true,
+				value: null
+			}
+        },
+ 		setResults: function(results) {
+ 			var orderedResults = _.sortBy(results, function(r){ if(r !== undefined){return r.date;}});
+        	this.results = _.map(orderedResults.reverse(), function(r){ return r;});
+        },
+        loadResults: function(val){
+        	var me = this;
+        	var ref = new Firebase(app.firebaseURL + '/results/' + val);
+        	ref.orderByChild("date").on('value', function(snapshot) {
+        		var data = snapshot.val();
+        		me.setResults(data);
+        	});
+        }
+
+
+      });
+    })();
+  </script>
+</dom-module>

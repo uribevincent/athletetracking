@@ -1,0 +1,71 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="athlete-list">
+  <template>
+    <style include="shared-styles">
+		:host {
+			display: block;
+		}
+
+		span,
+		input {
+			@apply(--paper-font-body2);
+		}
+		@media (max-width: 600px) {
+
+			.flex {
+				@apply(--layout-horizontal);
+				@apply(--layout-wrap);
+			}
+		}
+
+		.flex paper-card{
+			margin-right:4px;
+			margin-bottom:4px;
+		}
+    </style>
+
+
+	<firebase-collection
+		location="https://athlete-tracking.firebaseio.com/athletes"
+		data="{{athletes}}"
+		>
+	</firebase-collection>
+		<div class="container flex">
+	<template is="dom-repeat" items="[[athletes]]" as="athlete">
+			<paper-card heading="Card Title" image="http://placehold.it/350x150/FFC107/000000" >
+				<div class="card-content">[[athlete.name]]</div>
+				<div class="card-actions">
+					<paper-button> <a href$="{{baseUrl}}athletes/[[athlete.__firebaseKey__]]">Visualiser</a></paper-button>
+				</div>
+			</paper-card>
+
+	</template>
+	</div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'athlete-list'
+      });
+    })();
+  </script>
+</dom-module>
+
+
+
+

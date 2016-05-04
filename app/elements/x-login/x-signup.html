@@ -1,0 +1,79 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="x-signup">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+    </style>
+    <h1  class="page-title" tabindex="-1">Inscription</h1>
+    <form is="iron-form" id="form" >
+ <paper-input name="email" label="email" value="{{email}}" required></paper-input>
+ <paper-input name="password" label="password"  value="{{password}}" type="password"></paper-input>
+ <paper-button raised on-tap="signup">Submit</paper-button>
+    </form>
+</template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'x-signup',
+        properties:{
+        	email: String,
+        	password: String
+        },
+
+ 		signup: function() {
+ 			var ref = new Firebase(app.firebaseURL);
+ 			var email = this.email;
+ 			var pwd = this.password;
+			ref.createUser({
+			  email: email,
+			  password: pwd
+			}, function(error, userData) {
+			  if (error) {
+			    switch (error.code) {
+			      case "EMAIL_TAKEN":
+			        console.log("The new user account cannot be created because the email is already in use.");
+			        break;
+			      case "INVALID_EMAIL":
+			        console.log("The specified email is not a valid email.");
+			        break;
+			      default:
+			        console.log("Error creating user:", error);
+			    }
+			  } else {
+				//login
+				ref.authWithPassword({
+					email    : email,
+					password : pwd
+				}, function(error, authData) {
+					if(!error){
+						app.authData = authData;
+						//redirect
+						app.route = "home";
+						console.log("Successfully created user account with uid:", userData.uid);
+					}
+				}, {
+				  remember: "sessionOnly"
+				});
+
+			  }
+			});
+        }
+
+
+      });
+    })();
+  </script>
+</dom-module>
