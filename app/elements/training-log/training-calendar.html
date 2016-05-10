@@ -1,0 +1,159 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="training-calendar">
+<template>
+	<style include="shared-styles">
+		:host {
+			display: block;
+		}
+
+		span,
+		input {
+			@apply(--paper-font-body2);
+		}
+		@media (max-width: 600px) {
+
+			.flex {
+				@apply(--layout-horizontal);
+				@apply(--layout-wrap);
+			}
+		}
+
+		.flex {
+				@apply(--layout-horizontal);
+				@apply(--layout-wrap);
+			}
+
+		.flex paper-material{
+			width: 14%;
+			height: 200px;
+			margin-right:4px;
+			margin-bottom:4px;
+			min-width: 200px;
+		}
+
+		.day {
+			color: #EEE;
+			text-align: center;
+			vertical-align: middle;
+			font-size: 10rem;
+		}
+
+		.flex .empty{
+			width: 14%;
+			height: 200px;
+			margin-right:4px;
+			margin-bottom:4px;
+		}
+	</style>
+	<div>
+
+	<paper-dropdown-menu label="Mois">
+	<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{month}}">
+		<paper-item value="05">Mai</paper-item>
+		<paper-item value="06">Juin</paper-item>
+	</paper-listbox>
+	</paper-dropdown-menu>
+
+
+	<paper-dropdown-menu label="Année">
+	<paper-listbox class="dropdown-content" attr-for-selected="value"  selected="{{year}}">
+		<paper-item value="2016">2016</paper-item>
+		<paper-item value="2017">2017</paper-item>
+	</paper-listbox>
+	</paper-dropdown-menu>
+	</div>
+	<div class="container flex">
+		<template is="dom-repeat" items="[[days]]" as="day" >
+			<template is="dom-if" if="{{!day}}">
+				<div class="empty"><span>{{day.dayNumber}}</span></div>
+			</template>
+			<template is="dom-if" if="{{day}}">
+				<paper-material elevation="1">
+				<div class="day">
+					{{day.dayNumber}}
+				</div>
+				</paper-material>
+			</template>
+		</template>
+	</div>
+</template>
+
+<script>
+	(function() {
+		'use strict';
+
+		Polymer({
+			is: 'training-calendar',
+
+			properties: {
+				month: {
+					type: String,
+					notify: true
+				},
+				year: {
+					type: String,
+					notify: true
+				},
+
+				days: {
+					type: Array,
+					notify: true
+				}
+			},
+
+			observers: [ "computeCalendar(month, year)"],
+
+			ready: function() {
+				/*this.month = "05";
+				this.year = "2016";*/
+			},
+			getDaysToMonday: function(d) {
+				var dayOfWeek = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+				if(dayOfWeek == 0){
+					return 6;
+				}
+				else{
+					return dayOfWeek - 1;
+				}
+			},
+			computeCalendar: function(m,y){
+				if(m !== undefined && y !== undefined){
+					this.days = new Array();
+					var date = new Date(y, m, 0);
+					var limit = parseInt(date.getDate());
+					var diff = this.getDaysToMonday(date);
+					for(var j = 0; j < diff; j++){
+						this.push("days", null);
+					}
+					console.log(app.firebaseURL + '/training-log/' + y + '/' + m);
+					var ref = new Firebase(app.firebaseURL + '/training-log/' + y + '/' + m);
+    				ref.on('value', function(snapshot) {
+    					console.log(snapshot.val());
+    				});
+
+					for(var i = 0; i < limit; i++){
+						var o = {
+							fullDate: new Date(this.year, this.month, i + 1),
+							dayNumber: i + 1
+						};
+						this.push("days", o);
+					}
+
+				}
+			}
+		});
+	})();
+</script>
+</dom-module>

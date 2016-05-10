@@ -14,11 +14,11 @@
         @apply(--paper-font-body2);
       }
     </style>
-    <h1  class="page-title" tabindex="-1">Inscription</h1>
-    <form is="iron-form" id="form" >
- <paper-input name="email" label="email" value="{{email}}" required></paper-input>
- <paper-input name="password" label="password"  value="{{password}}" type="password"></paper-input>
- <paper-button raised on-tap="signup">Submit</paper-button>
+    <span class="page-title"></span>
+    <form  is="iron-form" id="form" >
+ <paper-input name="email" label="Email" value="{{email}}" required></paper-input>
+ <paper-input name="password" label="Mot de passe"  value="{{password}}" type="password"></paper-input>
+ <paper-button raised on-tap="signup">Inscription</paper-button>
     </form>
 </template>
 
@@ -53,6 +53,18 @@
 			        console.log("Error creating user:", error);
 			    }
 			  } else {
+			  	//save user
+			  	var usersRef = ref.child("users");
+			  	usersRef.set({
+					  alanisawesome: {
+					    date_of_birth: "June 23, 1912",
+					    full_name: "Alan Turing"
+					  },
+					  gracehop: {
+					    date_of_birth: "December 9, 1906",
+					    full_name: "Grace Hopper"
+					  }
+					});
 				//login
 				ref.authWithPassword({
 					email    : email,
@@ -65,7 +77,7 @@
 						console.log("Successfully created user account with uid:", userData.uid);
 					}
 				}, {
-				  remember: "sessionOnly"
+				  remember: "default"
 				});
 
 			  }

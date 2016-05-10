@@ -32,6 +32,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       next();
     }
 
+    function autoRedirect(route){
+    	if(!app.authData && window.location.port === ''){
+      	app.route = 'signup';
+      }
+      else{
+      	app.route = route;
+      }
+    }
+
     function setFocus(selected){
       document.querySelector('section[data-route="' + selected + '"] .page-title').focus();
     }
@@ -42,44 +51,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/', function() {
-      	if(app.authData){
-      	app.route = 'home';
-      }
-      else{
-      	app.route = 'signup';
-      }
+    	autoRedirect('home');
       setFocus(app.route);
     });
 
     page(app.baseUrl, function() {
-    	if(app.authData){
-      	app.route = 'home';
-      }
-      else{
-      	app.route = 'signup';
-      }
+    	autoRedirect('home');
       setFocus(app.route);
     });
 
     page('/athletes', function() {
-      app.route = 'athletes';
+    	autoRedirect('athletes');
       setFocus(app.route);
     });
 
     page('/athletes/:id', function(data) {
-      app.route = 'athlete-info';
+    	autoRedirect('athlete-info');
       app.params = data.params;
       setFocus(app.route);
     });
 
-    page('/contact', function() {
-      app.route = 'contact';
+    page('/training-log', function() {
+    	autoRedirect('training-log');
       setFocus(app.route);
     });
 
-	page('/books', function () {
-	  app.route = 'books';
-	});
+
     // 404
     page('*', function() {
       app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';

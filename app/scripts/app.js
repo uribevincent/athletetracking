@@ -17,6 +17,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.firebaseURL = 'https://athlete-tracking.firebaseio.com';
   app.firebaseProvider = 'anonymous';
   app.authData = null;
+  app.isLogged = false;
+  app.selected = 1;
   // Sets app default base URL
   app.baseUrl = '/';
   if (window.location.port === '') {  // if production
@@ -80,6 +82,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.$.paperDrawerPanel.closeDrawer();
   };
 
+  app.computeLogged = function(){
+    	console.log(app.isLogged);
+  	return !app.isLogged;
+  }
 	app.onFirebaseError = function(event) {
 	  this.$.errorToast.text = event.detail.message;
 	  this.$.errorToast.show();
@@ -89,6 +95,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   		//this.ref.on('value', function(snapshot) {
     	//Load needed data
     	//app.updateItems(snapshot);
+    	app.isLogged = true;
+    	console.log("toto");
   //});
 	};
 })(document);
