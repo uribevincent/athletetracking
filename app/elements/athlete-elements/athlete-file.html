@@ -30,28 +30,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	<paper-tab>Statistiques</paper-tab>
     </paper-tabs>
     	<iron-pages selected="{{selected}}">
+
     		<div>
     			<table>
-    			<tbody>
-    				<tr>
-	    				<td>Licence</td><td>{{dbAthlete.licenceNumber}}</td>
-	    			</tr>
-    				<tr>
-	    				<td>Age</td><td>{{dbAthlete.age}}</td>
-	    			</tr>
-    				<tr>
-	    				<td>Taille</td><td>{{dbAthlete.height}}</td>
-	    			</tr>
-    				<tr>
-	    				<td>Poids</td><td>{{dbAthlete.weight}}</td>
-	    			</tr>
-    				<tr>
-	    				<td>VMA Estimée</td><td>{{dbAthlete.vma}}</td>
-	    			</tr>
-    				<tr>
-	    				<td>Disponibilités</td><td>{{dbAthlete.availability}}</td>
-	    			</tr>
-    			</tbody>
+	    			<tbody>
+	    			  	<template is="dom-if" if="{{editEnabled}}">
+		    				<tr>
+			    				<td>Licence</td>
+			    				<td>
+			    					<paper-input value="{{dbAthlete.licenceNumber}}"></paper-input>
+			    				</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Date de naissance</td>
+			    				<td>
+			    					<paper-input value="{{dbAthlete.birthDate}}"></paper-input>
+			    				</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Taille</td>
+			    				<td>
+			    					<paper-input value="{{dbAthlete.height}}"></paper-input>
+			    				</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Poids</td>
+			    				<td>
+			    					<paper-input value="{{dbAthlete.weight}}"></paper-input>
+			    				</td>
+			    			</tr>
+		    				<tr>
+			    				<td>VMA Estimée</td>
+			    				<td>
+			    					<paper-input value="{{dbAthlete.vma}}"></paper-input>
+			    				</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Disponibilités</td>
+			    				<td>
+			    					<paper-input value="{{dbAthlete.availability}}"></paper-input>
+			    				</td>
+			    			</tr>
+		    			</template>
+		    			<template is="dom-if" if="{{!editEnabled}}">
+		    				<tr>
+			    				<td>Licence</td><td>{{dbAthlete.licenceNumber}}</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Age</td><td>{{dbAthlete.age}}</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Taille</td><td>{{dbAthlete.height}}</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Poids</td><td>{{dbAthlete.weight}}</td>
+			    			</tr>
+		    				<tr>
+			    				<td>VMA Estimée</td><td>{{dbAthlete.vma}}</td>
+			    			</tr>
+		    				<tr>
+			    				<td>Disponibilités</td><td>{{dbAthlete.availability}}</td>
+			    			</tr>
+		    			</template>
+	    			</tbody>
     			</table>
     		</div>
     		<div>
@@ -69,6 +110,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is: 'athlete-file',
 
         properties: {
+        	editEnabled: {
+        		type: Boolean,
+        		value: false
+        	},
+
         	selected: {
 				type: Number,
         		value: 0
@@ -91,6 +137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         loadAthlete: function(val){
         	var me = this;
         	var ref = new Firebase(app.firebaseURL + '/athletes/' + val);
+        	this.editEnabled = val === app.authData.uid;
         	ref.on('value', function(snapshot) {
         		var data = snapshot.val();
         		me.setAthlete(data);

@@ -43,6 +43,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			min-width: 200px;
 		}
 
+		.monthPicker {
+			@apply(--layout-horizontal);
+			@apply(--layout-wrap);
+
+		}
+
+		.month{
+			font-size: 0.8rem;
+		}
+
 		.day {
 			color: #EEE;
 			text-align: center;
@@ -60,14 +70,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<div>
 
 	<paper-dropdown-menu label="Mois">
-	<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{month}}">
-		<paper-item value="05">Mai</paper-item>
-		<paper-item value="06">Juin</paper-item>
+	<paper-listbox class="dropdown-content monthPicker" attr-for-selected="value" selected="{{month}}">
+		<template is="dom-repeat" items="[[monthes]]">
+			<paper-item value="{{item.id}}" class="month">{{item.name}}</paper-item>
+		</template>
 	</paper-listbox>
 	</paper-dropdown-menu>
 
 
-	<paper-dropdown-menu label="Année">
+	<paper-dropdown-menu flex  label="Année">
 	<paper-listbox class="dropdown-content" attr-for-selected="value"  selected="{{year}}">
 		<paper-item value="2016">2016</paper-item>
 		<paper-item value="2017">2017</paper-item>
@@ -110,15 +121,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				days: {
 					type: Array,
 					notify: true
+				},
+
+				monthes: {
+					type: Array,
+					value: [
+						{id: "01", name: "Janvier"},
+						{id: "02", name: "Février"},
+						{id: "03", name: "Mars"},
+						{id: "04", name: "Avril"},
+						{id: "05", name: "Mai"},
+						{id: "06", name: "Juin"},
+						{id: "07", name: "Juillet"},
+						{id: "08", name: "Août"},
+						{id: "09", name: "Septembre"},
+						{id: "10", name: "Octobre"},
+						{id: "11", name: "Novembre"},
+						{id: "12", name: "Décembre"}
+					],
+					notify: true
 				}
 			},
 
 			observers: [ "computeCalendar(month, year)"],
 
-			ready: function() {
-				/*this.month = "05";
-				this.year = "2016";*/
-			},
+
 			getDaysToMonday: function(d) {
 				var dayOfWeek = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
 				if(dayOfWeek == 0){

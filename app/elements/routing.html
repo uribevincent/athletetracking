@@ -33,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     function autoRedirect(route){
-    	if(!app.authData && window.location.port === ''){
+    	if(!app.authData /*&& window.location.port === ''*/){
       	app.route = 'signup';
       }
       else{

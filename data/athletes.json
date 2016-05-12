@@ -1,32 +1,25 @@
 [ null, {
+  "age" : 30,
+  "availability" : 5,
   "birthDate" : "10/09/1986",
+  "height" : 175,
+  "licenceNumber" : "1496764",
   "name" : "Vincent Uribe",
-  "vma": 19.2,
-  "age": 30,
-  "height": 175,
-  "weight": 75,
-  "availability": 5,
-  "licenceNumber": "1496764"
+  "vma" : 19.2,
+  "weight" : 75
 }, {
   "birthDate" : "20/09/1987",
   "name" : "Laura Bel Franquesa"
-} , {
+}, {
   "birthDate" : "20/09/1987",
   "name" : "Mélanie Menara"
-}
-, {
+}, {
   "birthDate" : "20/09/1987",
   "name" : "Elise Ravache"
-}
-, {
+}, {
   "birthDate" : "20/09/1987",
   "name" : "Clémence Decker"
-}
-, {
+}, {
   "birthDate" : "20/09/1987",
   "name" : "Stéphanie Guelfo"
-}
-
-
-]
-
+} ]

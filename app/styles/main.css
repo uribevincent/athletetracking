@@ -16,3 +16,26 @@ body {
 .page-title {
   outline: none;
 }
+
+table{
+ border-collapse: collapse;
+ width: 100%;
+      }
+      tbody tr:hover{
+      	background-color: #eee;
+      }
+      thead {
+		  font-family: 'Roboto Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		  color: #404040;
+      }
+
+      tbody {
+		  font-family: 'Roboto Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		  color: #262626;
+      }
+      th, td{
+		padding: 15px;
+		vertical-align: middle;
+		border-bottom: solid 1px #ccc;
+      	text-align: left;
+      }

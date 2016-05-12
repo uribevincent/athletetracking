@@ -16,9 +16,28 @@
     </style>
     <span class="page-title"></span>
     <form  is="iron-form" id="form" >
- <paper-input name="email" label="Email" value="{{email}}" required></paper-input>
- <paper-input name="password" label="Mot de passe"  value="{{password}}" type="password"></paper-input>
+
+ <paper-input label="Nom" value="{{name}}" required></paper-input>
+ <paper-input label="Email" value="{{email}}" required></paper-input>
+ <paper-input label="Mot de passe"  value="{{password}}" type="password"></paper-input><br>
+ <paper-checkbox checked="{{isCoach}}">Coach</paper-checkbox><br>
+ <paper-checkbox checked="{{isAthlete}}">Athlete</paper-checkbox>
+
+<div hidden$="{{!isAthlete}}">
+ <paper-input label="Date de naissance" value="{{birthDate}}"></paper-input>
+ <paper-input label="Licence FFA" value="{{licenceNumber}}"></paper-input>
+ <paper-input label="VMA estimée" value="{{speed}}"></paper-input>
+ <paper-input label="Taille" value="{{height}}"></paper-input>
+ <paper-input label="Poids" value="{{weight}}"></paper-input>
+ <paper-input label="Nombre d'entraînements" value="{{availability}}"></paper-input>
+
+</div>
+
+
  <paper-button raised on-tap="signup">Inscription</paper-button>
+
+
+
     </form>
 </template>
 
@@ -35,8 +54,10 @@
 
  		signup: function() {
  			var ref = new Firebase(app.firebaseURL);
- 			var email = this.email;
- 			var pwd = this.password;
+ 			var name = this.name, email = this.email, pwd = this.password, isAthlete = this.isAthlete,
+ 			isCoach = this.isCoach, birthDate = this.birthDate, licenceNumber = this.licenceNumber,
+ 			speed = this.speed, height = this.height, weight = this.weight, availability = this.availability;
+
 			ref.createUser({
 			  email: email,
 			  password: pwd
@@ -53,18 +74,26 @@
 			        console.log("Error creating user:", error);
 			    }
 			  } else {
-			  	//save user
-			  	var usersRef = ref.child("users");
-			  	usersRef.set({
-					  alanisawesome: {
-					    date_of_birth: "June 23, 1912",
-					    full_name: "Alan Turing"
-					  },
-					  gracehop: {
-					    date_of_birth: "December 9, 1906",
-					    full_name: "Grace Hopper"
-					  }
-					});
+			  	if(isAthlete){
+			  		//save athlete
+				  	var athletesRef = ref.child("athletes/" + userData.uid);
+				  	athletesRef.set({
+			  			name: name,
+			  			vma: speed,
+			  			height: height,
+			  			weight: weight,
+			  			birthDate: birthDate,
+			  			licenceNumber: licenceNumber,
+			  			availability: availability
+			  		});
+			  	}
+			  	if(isCoach){
+			  		var coachesRef = ref.child("coaches/" + userData.uid);
+				  	coachesRef.set({
+			  			name: name
+			  		});
+			  	}
+						console.log("Successfully created user account with uid:", userData.uid);
 				//login
 				ref.authWithPassword({
 					email    : email,
@@ -74,7 +103,7 @@
 						app.authData = authData;
 						//redirect
 						app.route = "home";
-						console.log("Successfully created user account with uid:", userData.uid);
+						console.log("Successfully logged user account with uid:", authData.uid);
 					}
 				}, {
 				  remember: "default"
