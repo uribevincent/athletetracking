@@ -32,45 +32,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	<iron-pages selected="{{selected}}">
 
     		<div>
-    			<table>
-	    			<tbody>
+
 	    			  	<template is="dom-if" if="{{editEnabled}}">
-		    				<tr>
-			    				<td>Licence</td>
-			    				<td>
-			    					<paper-input value="{{dbAthlete.licenceNumber}}"></paper-input>
-			    				</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Date de naissance</td>
-			    				<td>
-			    					<paper-input value="{{dbAthlete.birthDate}}"></paper-input>
-			    				</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Taille</td>
-			    				<td>
-			    					<paper-input value="{{dbAthlete.height}}"></paper-input>
-			    				</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Poids</td>
-			    				<td>
-			    					<paper-input value="{{dbAthlete.weight}}"></paper-input>
-			    				</td>
-			    			</tr>
-		    				<tr>
-			    				<td>VMA Estimée</td>
-			    				<td>
-			    					<paper-input value="{{dbAthlete.vma}}"></paper-input>
-			    				</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Disponibilités</td>
-			    				<td>
-			    					<paper-input value="{{dbAthlete.availability}}"></paper-input>
-			    				</td>
-			    			</tr>
+
+			    					<paper-input label="Licence FFA" value="{{dbAthlete.licenceNumber}}"></paper-input>
+			    					<paper-input label="Date de naissance" value="{{dbAthlete.birthDate}}"></paper-input>
+			    			    					<paper-input label="Taille" value="{{dbAthlete.height}}"></paper-input>
+			    					<paper-input label="Poids" value="{{dbAthlete.weight}}"></paper-input>
+
+			    					<paper-input label="VMA Estimée" value="{{dbAthlete.vma}}"></paper-input>
+
+			    					<paper-input label="Disponibilités" value="{{dbAthlete.availability}}"></paper-input>
+
 		    			</template>
 		    			<template is="dom-if" if="{{!editEnabled}}">
 		    				<tr>

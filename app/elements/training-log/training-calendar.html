@@ -37,10 +37,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 		.flex paper-material{
 			width: 14%;
-			height: 200px;
+			height: 100px;
 			margin-right:4px;
 			margin-bottom:4px;
-			min-width: 200px;
+			min-width: 100px;
 		}
 
 		.monthPicker {
@@ -57,14 +57,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			color: #EEE;
 			text-align: center;
 			vertical-align: middle;
-			font-size: 10rem;
+			font-size: 5rem;
+			position: relative;
 		}
 
 		.flex .empty{
 			width: 14%;
-			height: 200px;
+			height: 100px;
 			margin-right:4px;
 			margin-bottom:4px;
+		}
+
+		.race{
+			color: red;
+		}
+
+		.training{
+			color: green;
+		}
+
+		.event{
+			  position: absolute;
+			  top: 0;
+			  left: 0;
+			width: 100%
 		}
 	</style>
 	<div>
@@ -94,6 +110,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				<paper-material elevation="1">
 				<div class="day">
 					{{day.dayNumber}}
+				</div>
+				<div class="event">
+					<template is="dom-repeat" items="[[day.logs]]">
+						<div class="{{item.type}}">{{item.type}}</div>
+					</template>
 				</div>
 				</paper-material>
 			</template>
@@ -155,29 +176,73 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					return dayOfWeek - 1;
 				}
 			},
+			getDayIndex: function(dayNumber, diff){
+				var index = _.findIndex(this.days, function(d){
+					if(d === null){ return false; }
+					return d.dayNumber == dayNumber;
+				});
+				return index - (diff == 0 ? 0 : diff - 1);
+			},
 			computeCalendar: function(m,y){
 				if(m !== undefined && y !== undefined){
 					this.days = new Array();
 					var date = new Date(y, m, 0);
 					var limit = parseInt(date.getDate());
 					var diff = this.getDaysToMonday(date);
+					//add empty days
 					for(var j = 0; j < diff; j++){
-						this.push("days", null);
+						this.push('days',null);
 					}
-					console.log(app.firebaseURL + '/training-log/' + y + '/' + m);
-					var ref = new Firebase(app.firebaseURL + '/training-log/' + y + '/' + m);
-    				ref.on('value', function(snapshot) {
-    					console.log(snapshot.val());
-    				});
-
+					//Generate month calendar
 					for(var i = 0; i < limit; i++){
 						var o = {
 							fullDate: new Date(this.year, this.month, i + 1),
-							dayNumber: i + 1
+							dayNumber: i + 1,
+							logs: []
 						};
-						this.push("days", o);
+						this.push('days',o);
 					}
 
+					//Get logs
+					var me = this;
+					var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid +'/' + y + '/' + m);
+    				ref.on('child_added', function(snapshot) {
+    					var newLog = snapshot.val();
+    					var dIndex = me.getDayIndex(newLog.dayNumber, diff);
+    					if(dIndex > -1){
+    						newLog.uid = snapshot.key();
+    						me.push("days.#" + dIndex + ".logs", newLog);
+    					}
+    				});
+    				ref.on('child_changed', function(snapshot, previous) {
+    					var updatedLog = snapshot.val();
+    					updatedLog.uid = snapshot.key();
+    					var dIndex = me.getDayIndex(updatedLog.dayNumber, diff);
+    					if(dIndex > -1){
+    						var d = me.get('days.#' + dIndex);
+    						var index = _.findIndex(d.logs, function(d){
+								return d.uid == snapshot.key();
+							});
+							//day changed
+							if(index > -1) {
+								me.splice("days.#" + dIndex + ".logs", index, 1,updatedLog);
+							}
+							console.log(index);
+    						/*me.splice("days", dIndex, 1);
+    						me.splice("days.#" + dIndex + ".logs", updatedLog);*/
+    					}
+    				});
+    				ref.on('child_removed', function(snapshot, previous) {
+    					var deletedLog = snapshot.val();
+    					var dIndex = me.getDayIndex(deletedLog.dayNumber, diff);
+    					if(dIndex > -1){
+    						var d = me.get('days.#' + dIndex);
+    						var index = _.findIndex(d.logs, function(d){
+								return d.uid == snapshot.key();
+							});
+							if(index > -1) me.splice("days.#" + dIndex + ".logs", index, 1);
+    					}
+    				});
 				}
 			}
 		});
