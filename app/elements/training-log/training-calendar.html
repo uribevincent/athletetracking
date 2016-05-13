@@ -13,7 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="training-calendar">
 <template>
-	<style include="shared-styles">
+	<style include="shared-styles" is="custom-style">
 		:host {
 			display: block;
 		}
@@ -35,57 +35,79 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				@apply(--layout-wrap);
 			}
 
-		.flex paper-material{
-			width: 14%;
-			height: 100px;
-			margin-right:4px;
-			margin-bottom:4px;
-			min-width: 100px;
-		}
-
 		.monthPicker {
 			@apply(--layout-horizontal);
 			@apply(--layout-wrap);
-
 		}
 
 		.month{
 			font-size: 0.8rem;
 		}
 
-		.day {
-			color: #EEE;
-			text-align: center;
-			vertical-align: middle;
-			font-size: 5rem;
-			position: relative;
+		.flex paper-card{
+			width: 14%;
+			min-height: 100px;
+			margin-right:4px;
+			margin-bottom:4px;
+			min-width: 100px;
 		}
 
 		.flex .empty{
 			width: 14%;
-			height: 100px;
+			min-height: 100px;
 			margin-right:4px;
 			margin-bottom:4px;
 		}
 
 		.race{
 			color: red;
+
 		}
 
+		.newEvent{
+			color: blue;
+
+		}
 		.training{
 			color: green;
 		}
 
 		.event{
-			  position: absolute;
-			  top: 0;
-			  left: 0;
+				position: absolute;
+				top: 0;
+				left: 0;
 			width: 100%
 		}
-	</style>
-	<div>
 
-	<paper-dropdown-menu label="Mois">
+			paper-card.day { @apply(--layout-horizontal); }
+
+
+		.card-title {
+			color: #EEE;
+			text-align: center;
+			vertical-align: middle;
+			font-size: 5vw;
+			/*width: 100px;
+			height: 170px;*/
+			/*position: relative;*/
+		}
+		.day-content {
+			@apply(--layout-flex);
+			float: left;
+		}
+		.card-header { @apply(--paper-font-headline); }
+		.card-name { color: var(--paper-grey-600); margin: 10px 0; }
+
+		paper-button {
+		    min-width: 0px;
+		}
+		 paper-dialog.form {
+		 	width: 50%;
+		 }
+	</style>
+
+	<div>
+	<paper-dropdown-menu label="Mois" >
 	<paper-listbox class="dropdown-content monthPicker" attr-for-selected="value" selected="{{month}}">
 		<template is="dom-repeat" items="[[monthes]]">
 			<paper-item value="{{item.id}}" class="month">{{item.name}}</paper-item>
@@ -94,8 +116,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	</paper-dropdown-menu>
 
 
-	<paper-dropdown-menu flex  label="Année">
-	<paper-listbox class="dropdown-content" attr-for-selected="value"  selected="{{year}}">
+	<paper-dropdown-menu flex	label="Année">
+	<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{year}}">
 		<paper-item value="2016">2016</paper-item>
 		<paper-item value="2017">2017</paper-item>
 	</paper-listbox>
@@ -104,22 +126,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<div class="container flex">
 		<template is="dom-repeat" items="[[days]]" as="day" >
 			<template is="dom-if" if="{{!day}}">
-				<div class="empty"><span>{{day.dayNumber}}</span></div>
+				<div class="empty"></div>
 			</template>
 			<template is="dom-if" if="{{day}}">
-				<paper-material elevation="1">
-				<div class="day">
-					{{day.dayNumber}}
-				</div>
-				<div class="event">
-					<template is="dom-repeat" items="[[day.logs]]">
-						<div class="{{item.type}}">{{item.type}}</div>
-					</template>
-				</div>
-				</paper-material>
+
+				<paper-card class="day">
+					<div class="card-title">
+						{{day.dayNumber}}
+					</div>
+	 				<div class="day-content">
+						<div class="card-content">
+							<!--<div class="card-header">Rate this album</div>
+							<div class="card-name">Mac Miller</div>
+							<div>Live from space</div>-->
+						</div>
+						<div class="card-actions horizontal justified">
+							<template is="dom-repeat" items="[[day.logs]]">
+								<paper-button class$="{{item.type}}" data-log="{{item}}" on-tap="openDialog">
+									<i class="fa fa-heartbeat" aria-hidden="true"></i>
+									<paper-tooltip>Editer</paper-tooltip>
+								</paper-button>
+							</template>
+								<paper-button class="newEvent" data-arg="{{day}}" on-tap="openDialog">
+									<i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+									<paper-tooltip>Nouvel évènement</paper-tooltip>
+								</paper-button>
+						</div>
+					</div>
+				</paper-card>
 			</template>
 		</template>
+
+
 	</div>
+	<paper-dialog id="modal2" class="form" modal>
+<div>
+			<form is="iron-form">
+			<h2>Nouvel évènement</h2>
+			<paper-dropdown-menu flex	label="Type">
+			<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{currentEvent.type}}">
+				<paper-item value="training">Entraînement</paper-item>
+				<paper-item value="race">Compétition</paper-item>
+			</paper-listbox>
+			</paper-dropdown-menu>
+
+			<paper-textarea  label="Séance prévue" value="{{currentEvent.session.scheduled}}"></paper-textarea>
+			<paper-textarea  label="Séance réalisée" value="{{currentEvent.session.real}}"></paper-textarea>
+			<paper-input  label="Distance totale" value="{{currentEvent.distance}}"></paper-input>
+			<paper-input  label="Temps total" value="{{currentEvent.time}}"></paper-input>
+			<paper-slider label="Fréquence cardiaque moyenne" value="{{currentEvent.distance.heartFrequency}}" max="220" editable></paper-slider>
+			<paper-slider label="Rate PE" pin snaps max="10" max-markers="10" step="1" value="{{currentEvent.rpe}}"></paper-slider>
+			<paper-textarea  label="Commentaire" value="{{currentEvent.comment}}"></paper-textarea>
+
+			<div class="buttons">
+	        	<paper-button raised dialog-confirm autofocus on-tap="saveEvent">Enregistrer</paper-button>
+        		<paper-button dialog-dismiss>Annuler</paper-button>
+	      </div>
+		</form>
+</div>
+	</paper-dialog>
 </template>
 
 <script>
@@ -143,7 +208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					type: Array,
 					notify: true
 				},
-
+				currentEvent: Object,
 				monthes: {
 					type: Array,
 					value: [
@@ -166,7 +231,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 			observers: [ "computeCalendar(month, year)"],
 
-
+			ready: function(){
+				//this.month = "05";
+				this.year = "2016";
+			},
 			getDaysToMonday: function(d) {
 				var dayOfWeek = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
 				if(dayOfWeek == 0){
@@ -176,12 +244,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					return dayOfWeek - 1;
 				}
 			},
+			openDialog: function(e){
+				if(e.currentTarget.className.startsWith('newEvent')){
+        			this.currentEvent = {dayNumber: e.currentTarget.dataArg.dayNumber};
+        		}
+        		else{
+        			this.currentEvent = e.currentTarget.dataLog;
+        		}
+				var dialog = document.getElementById("modal2");
+				if (dialog) {
+					dialog.open();
+				}
+			},
 			getDayIndex: function(dayNumber, diff){
 				var index = _.findIndex(this.days, function(d){
 					if(d === null){ return false; }
 					return d.dayNumber == dayNumber;
 				});
 				return index - (diff == 0 ? 0 : diff - 1);
+			},
+			findLog: function(logId){
+				var lIndex = -1;
+				var dIndex = _.findIndex(this.days,
+					function(d){
+						if(d === null){ return false; }
+						lIndex = _.findIndex(d.logs,
+							function(l){
+								return l.uid == logId;
+							});
+					return lIndex > -1;
+				});
+				return {day: dIndex, log: lIndex};
 			},
 			computeCalendar: function(m,y){
 				if(m !== undefined && y !== undefined){
@@ -205,44 +298,71 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 					//Get logs
 					var me = this;
+
 					var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid +'/' + y + '/' + m);
-    				ref.on('child_added', function(snapshot) {
-    					var newLog = snapshot.val();
-    					var dIndex = me.getDayIndex(newLog.dayNumber, diff);
-    					if(dIndex > -1){
-    						newLog.uid = snapshot.key();
-    						me.push("days.#" + dIndex + ".logs", newLog);
-    					}
-    				});
-    				ref.on('child_changed', function(snapshot, previous) {
-    					var updatedLog = snapshot.val();
-    					updatedLog.uid = snapshot.key();
-    					var dIndex = me.getDayIndex(updatedLog.dayNumber, diff);
-    					if(dIndex > -1){
-    						var d = me.get('days.#' + dIndex);
-    						var index = _.findIndex(d.logs, function(d){
+					ref.on('child_added', function(snapshot) {
+						var newLog = snapshot.val();
+						var dIndex = me.getDayIndex(newLog.dayNumber, diff);
+						if(dIndex > -1){
+							newLog.uid = snapshot.key();
+							me.push("days.#" + dIndex + ".logs", newLog);
+						}
+					});
+
+					ref.on('child_changed', function(snapshot, previous) {
+						var updatedLog = snapshot.val();
+						updatedLog.uid = snapshot.key();
+						var log = me.findLog(updatedLog.uid);
+						var oldLogIndex = log.day - (diff == 0 ? 0 : diff - 1);
+						var oldLog = me.get('days.#' + oldLogIndex);
+						var dIndex = me.getDayIndex(updatedLog.dayNumber, diff);
+						me.splice("days.#" + oldLogIndex + ".logs", log.log, 1);
+						me.push("days.#" + dIndex + ".logs", updatedLog);
+
+						if(dIndex > -1){
+							var d = me.get('days.#' + dIndex);
+							var index = _.findIndex(d.logs, function(d){
 								return d.uid == snapshot.key();
 							});
 							//day changed
 							if(index > -1) {
 								me.splice("days.#" + dIndex + ".logs", index, 1,updatedLog);
 							}
-							console.log(index);
-    						/*me.splice("days", dIndex, 1);
-    						me.splice("days.#" + dIndex + ".logs", updatedLog);*/
-    					}
-    				});
-    				ref.on('child_removed', function(snapshot, previous) {
-    					var deletedLog = snapshot.val();
-    					var dIndex = me.getDayIndex(deletedLog.dayNumber, diff);
-    					if(dIndex > -1){
-    						var d = me.get('days.#' + dIndex);
-    						var index = _.findIndex(d.logs, function(d){
+						}
+					});
+					ref.on('child_removed', function(snapshot, previous) {
+						var deletedLog = snapshot.val();
+						var dIndex = me.getDayIndex(deletedLog.dayNumber, diff);
+						if(dIndex > -1){
+							var d = me.get('days.#' + dIndex);
+							var index = _.findIndex(d.logs, function(d){
 								return d.uid == snapshot.key();
 							});
 							if(index > -1) me.splice("days.#" + dIndex + ".logs", index, 1);
-    					}
-    				});
+						}
+					});
+				}
+			},
+			saveEvent: function(e){
+				var me = this;
+				var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + this.year + '/' + this.month);
+				if(me.currentEvent.uid !== undefined){
+					ref.child(me.currentEvent.uid).set({
+						type: me.currentEvent.type,
+						comment: me.currentEvent.comment,
+						dayNumber: me.currentEvent.dayNumber,
+						distance: me.currentEvent.distance,
+						heartFrequency: me.currentEvent.heartFrequency,
+						rpe: me.currentEvent.rpe,
+						session: {
+							real: me.currentEvent.real,
+							scheduled: me.currentEvent.scheduled
+						},
+						time: me.currentEvent.time
+					});
+				}
+				else{
+					ref.push(me.currentEvent);
 				}
 			}
 		});

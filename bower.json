@@ -12,7 +12,8 @@
     "carbon-elements": "PolymerElements/carbon-elements#^0.1.0",
     "carbon-route": "PolymerElements/carbon-route#0.8.0",
     "firebase-element": "GoogleWebComponents/firebase-element#1.0.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "font-awesome": "^4.6.2"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
