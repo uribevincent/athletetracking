@@ -85,7 +85,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.computeLogged = function(){
     	console.log(app.isLogged);
   	return !app.isLogged;
-  }
+  };
+
 	app.onFirebaseError = function(event) {
 	  this.$.errorToast.text = event.detail.message;
 	  this.$.errorToast.show();
@@ -96,7 +97,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	//Load needed data
     	//app.updateItems(snapshot);
     	app.isLogged = true;
-    	console.log("toto");
   //});
 	};
 })(document);

@@ -13,6 +13,8 @@
       }
 
     </style>
+
+	<iron-pages selected="{{selectedPage}}">
     <paper-material elevation="1"  style="overflow-x:auto;">
 	   	<table>
 	   		<thead>
@@ -41,23 +43,28 @@
 			</tbody>
 		</table>
 
-    <paper-button raised on-tap="openDialog">Nouveau résultat</paper-button>
+    <paper-button raised on-tap="openDialog" hidden$="{{!editEnabled}}" >Nouveau résultat</paper-button>
+
 	</paper-material>
-	<paper-dialog id="modal" modal>
-		<form is="iron-form">
+
+	<!--<paper-dialog id="modal">-->
+	
+    <paper-material elevation="1"  style="overflow-x:auto;">
 			<h2>Nouveau résultat de compétition</h2>
+
+		<form is="iron-form">
 			<paper-input label="Date" value="{{raceDate}}" requiered error-message="DD/MM/YYY" auto-validate pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"></paper-input>
 			<paper-dropdown-menu label="Distance">
-			<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{raceDistance}}">
-					<paper-item value="Marathon" >Marathon</paper-item>
-					<paper-item value="21K" >Semi-marathon</paper-item>
-					<paper-item value="10K" >10 km</paper-item>
-					<paper-item value="5K" >5 km</paper-item>
-					<paper-item value="1500" >1500 m</paper-item>
-					<paper-item value="3000" >3000 m</paper-item>
-					<paper-item value="5000" >5000 m</paper-item>
-					<paper-item value="10000" >10000 m</paper-item>
-			</paper-listbox>
+				<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{raceDistance}}">
+						<paper-item value="Marathon" >Marathon</paper-item>
+						<paper-item value="21K" >Semi-marathon</paper-item>
+						<paper-item value="10K" >10 km</paper-item>
+						<paper-item value="5K" >5 km</paper-item>
+						<paper-item value="1500" >1500 m</paper-item>
+						<paper-item value="3000" >3000 m</paper-item>
+						<paper-item value="5000" >5000 m</paper-item>
+						<paper-item value="10000" >10000 m</paper-item>
+				</paper-listbox>
 			</paper-dropdown-menu>
 			<paper-input label="Compétition" value="{{raceName}}" required ></paper-input>
 			<paper-input label="Temps officiel" value="{{raceOfficialTime}}" required ></paper-input>
@@ -65,11 +72,13 @@
 			<paper-input label="Position générale" value="{{raceGlobalPosition}}"></paper-input>
 			<paper-input label="Position catégorie" value="{{raceCategoryPosition}}"></paper-input>
 			<div class="buttons">
-	        	<paper-button raised dialog-confirm autofocus on-tap="addRace">Enregistrer</paper-button>
-        		<paper-button dialog-dismiss>Annuler</paper-button>
+	        	<paper-button on-tap="addRace">Enregistrer</paper-button>
+        		<paper-button on-tap="cancelRace">Annuler</paper-button>
 	      </div>
 		</form>
-	</paper-dialog>
+</paper-material>
+<!---	</paper-dialog>-->
+</iron-pages>
 </template>
 
   <script>
@@ -84,10 +93,19 @@
         		type: Boolean,
         		value: false
         	},
+        	selectedPage:{
+        		type: Number,
+        		value: 0,
+        	},
         	selected: {
 				type: Number,
         		value: 0
         	},
+        	editEnabled:{
+				type: Boolean,
+				notify: true,
+				reflectToAttribute: true
+			},
           	athlete: {
 				type: String,
 				notify: true,
@@ -115,9 +133,10 @@
         },
         addRace: function(){
         	var me = this;
+        	var raceDate = new Date(me.raceDate);
         	var ref = new Firebase(app.firebaseURL + '/results/' + app.authData.uid);
         	ref.push({
-        		date: new Date(me.raceDate),
+        		date: raceDate,
         		distance: me.raceDistance,
         		name: me.raceName,
         		time: {
@@ -128,14 +147,37 @@
         			global: me.raceGlobalPosition,
         			categoryPosition: me.raceCategoryPosition
         		}
-        	});
-        },
+        	}); 
+        	var mm = (raceDate.getMonth()+1).toString(); // getMonth() is zero-based
+  
+        	var logRef = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + raceDate.getFullYear() + '/' + (mm[1]?mm:"0"+mm[0]));
+			logRef.push({
+				type: 'race',
+				dayNumber: raceDate.getDate() + 1,
+				distance: me.raceDistance,
+        		name: me.raceName,
+				time: {
+        			real: me.raceRealTime,
+	        		official: me.raceOfficialTime
+	        	},
+        		position: {
+        			global: me.raceGlobalPosition,
+        			categoryPosition: me.raceCategoryPosition
+        		}
+			});
+		      this.selectedPage = 0;
 
+        },
+        cancelRace: function(){
+
+		      this.selectedPage = 0;
+		  },
         openDialog: function(){
-        	  var dialog = document.getElementById("modal");
+        	  /*var dialog = document.getElementById("modal");
 		      if (dialog) {
 		        dialog.open();
-		      }
+		      }*/
+		      this.selectedPage = 1;
         }
 
 

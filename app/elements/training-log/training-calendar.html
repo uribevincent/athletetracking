@@ -83,7 +83,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
 		.card-title {
-			color: #EEE;
+			color: #BBB;
 			text-align: center;
 			vertical-align: middle;
 			font-size: 5vw;
@@ -106,85 +106,87 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		 }
 	</style>
 
+	<iron-pages selected="{{selectedPage}}">
 	<div>
-	<paper-dropdown-menu label="Mois" >
-	<paper-listbox class="dropdown-content monthPicker" attr-for-selected="value" selected="{{month}}">
-		<template is="dom-repeat" items="[[monthes]]">
-			<paper-item value="{{item.id}}" class="month">{{item.name}}</paper-item>
-		</template>
-	</paper-listbox>
-	</paper-dropdown-menu>
-
-
-	<paper-dropdown-menu flex	label="Année">
-	<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{year}}">
-		<paper-item value="2016">2016</paper-item>
-		<paper-item value="2017">2017</paper-item>
-	</paper-listbox>
-	</paper-dropdown-menu>
-	</div>
-	<div class="container flex">
-		<template is="dom-repeat" items="[[days]]" as="day" >
-			<template is="dom-if" if="{{!day}}">
-				<div class="empty"></div>
-			</template>
-			<template is="dom-if" if="{{day}}">
-
-				<paper-card class="day">
-					<div class="card-title">
-						{{day.dayNumber}}
-					</div>
-	 				<div class="day-content">
-						<div class="card-content">
-							<!--<div class="card-header">Rate this album</div>
-							<div class="card-name">Mac Miller</div>
-							<div>Live from space</div>-->
-						</div>
-						<div class="card-actions horizontal justified">
-							<template is="dom-repeat" items="[[day.logs]]">
-								<paper-button class$="{{item.type}}" data-log="{{item}}" on-tap="openDialog">
-									<i class="fa fa-heartbeat" aria-hidden="true"></i>
-									<paper-tooltip>Editer</paper-tooltip>
-								</paper-button>
-							</template>
-								<paper-button class="newEvent" data-arg="{{day}}" on-tap="openDialog">
-									<i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
-									<paper-tooltip>Nouvel évènement</paper-tooltip>
-								</paper-button>
-						</div>
-					</div>
-				</paper-card>
-			</template>
-		</template>
-
-
-	</div>
-	<paper-dialog id="modal2" class="form" modal>
-<div>
-			<form is="iron-form">
-			<h2>Nouvel évènement</h2>
-			<paper-dropdown-menu flex	label="Type">
-			<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{currentEvent.type}}">
-				<paper-item value="training">Entraînement</paper-item>
-				<paper-item value="race">Compétition</paper-item>
+		<div>
+			<paper-dropdown-menu label="Mois" >
+			<paper-listbox class="dropdown-content monthPicker" attr-for-selected="value" selected="{{month}}">
+				<template is="dom-repeat" items="[[monthes]]">
+					<paper-item value="{{item.id}}" class="month">{{item.name}}</paper-item>
+				</template>
 			</paper-listbox>
 			</paper-dropdown-menu>
 
-			<paper-textarea  label="Séance prévue" value="{{currentEvent.session.scheduled}}"></paper-textarea>
-			<paper-textarea  label="Séance réalisée" value="{{currentEvent.session.real}}"></paper-textarea>
-			<paper-input  label="Distance totale" value="{{currentEvent.distance}}"></paper-input>
-			<paper-input  label="Temps total" value="{{currentEvent.time}}"></paper-input>
-			<paper-slider label="Fréquence cardiaque moyenne" value="{{currentEvent.distance.heartFrequency}}" max="220" editable></paper-slider>
-			<paper-slider label="Rate PE" pin snaps max="10" max-markers="10" step="1" value="{{currentEvent.rpe}}"></paper-slider>
-			<paper-textarea  label="Commentaire" value="{{currentEvent.comment}}"></paper-textarea>
 
-			<div class="buttons">
-	        	<paper-button raised dialog-confirm autofocus on-tap="saveEvent">Enregistrer</paper-button>
-        		<paper-button dialog-dismiss>Annuler</paper-button>
-	      </div>
-		</form>
-</div>
-	</paper-dialog>
+			<paper-dropdown-menu flex	label="Année">
+			<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{year}}">
+				<paper-item value="2016">2016</paper-item>
+				<paper-item value="2017">2017</paper-item>
+			</paper-listbox>
+			</paper-dropdown-menu>
+		</div>
+		<div class="container flex">
+			<template is="dom-repeat" items="[[days]]" as="day" >
+				<template is="dom-if" if="{{!day}}">
+					<div class="empty"></div>
+				</template>
+				<template is="dom-if" if="{{day}}">
+
+					<paper-card class="day">
+						<div class="card-title">
+							{{day.dayNumber}}
+						</div>
+		 				<div class="day-content">
+							<div class="card-content">
+								<!--<div class="card-header">Rate this album</div>
+								<div class="card-name">Mac Miller</div>
+								<div>Live from space</div>-->
+							</div>
+							<div class="card-actions horizontal justified">
+								<template is="dom-repeat" items="[[day.logs]]">
+									<paper-button class$="{{item.type}}" data-log="{{item}}" on-tap="openDialog">
+										<i class="fa fa-heartbeat" aria-hidden="true"></i>
+										<paper-tooltip>Editer</paper-tooltip>
+									</paper-button>
+								</template>
+									<paper-button class="newEvent" data-arg="{{day}}" on-tap="openDialog">
+										<i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+										<paper-tooltip>Nouvel évènement</paper-tooltip>
+									</paper-button>
+							</div>
+						</div>
+					</paper-card>
+				</template>
+			</template>
+
+
+		</div>
+	</div>
+	<div>
+		<h2>Nouvel évènement</h2>
+			<form is="iron-form">
+				<paper-dropdown-menu flex	label="Type">
+				<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{currentEvent.type}}">
+					<paper-item value="training">Entraînement</paper-item>
+						<paper-item value="race">Compétition</paper-item>
+					</paper-listbox>
+					</paper-dropdown-menu>
+
+				<paper-textarea  label="Séance prévue" value="{{currentEvent.session.scheduled}}"></paper-textarea>
+				<paper-textarea  label="Séance réalisée" value="{{currentEvent.session.real}}"></paper-textarea>
+				<paper-input  label="Distance totale" value="{{currentEvent.distance}}"></paper-input>
+				<paper-input  label="Temps total" value="{{currentEvent.time}}"></paper-input>
+				<paper-slider label="Fréquence cardiaque moyenne" value="{{currentEvent.distance.heartFrequency}}" max="220" editable></paper-slider>
+				<paper-slider label="Rate PE" pin snaps max="10" max-markers="10" step="1" value="{{currentEvent.rpe}}"></paper-slider>
+				<paper-textarea  label="Commentaire" value="{{currentEvent.comment}}"></paper-textarea>
+
+				<div class="buttons">
+			       	<paper-button raised on-tap="saveEvent">Enregistrer</paper-button>
+		       		<paper-button on-tap="cancelEvent">Annuler</paper-button>
+			    </div>
+			</form>
+	</div>
+	</iron-pages>
 </template>
 
 <script>
@@ -209,6 +211,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					notify: true
 				},
 				currentEvent: Object,
+				selectedPage: {
+					type: Number,
+					value: 0,
+				},
 				monthes: {
 					type: Array,
 					value: [
@@ -251,10 +257,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         		else{
         			this.currentEvent = e.currentTarget.dataLog;
         		}
-				var dialog = document.getElementById("modal2");
+        		this.selectedPage = 1;
+				/*var dialog = document.getElementById("modal2");
 				if (dialog) {
 					dialog.open();
-				}
+				}*/
 			},
 			getDayIndex: function(dayNumber, diff){
 				var index = _.findIndex(this.days, function(d){
@@ -355,8 +362,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						heartFrequency: me.currentEvent.heartFrequency,
 						rpe: me.currentEvent.rpe,
 						session: {
-							real: me.currentEvent.real,
-							scheduled: me.currentEvent.scheduled
+							real: me.currentEvent.session.real,
+							scheduled: me.currentEvent.session.scheduled
 						},
 						time: me.currentEvent.time
 					});
@@ -364,6 +371,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				else{
 					ref.push(me.currentEvent);
 				}
+
+        		this.selectedPage = 0;
+			},
+			cancelEvent: function(){				
+        		this.selectedPage = 0;
 			}
 		});
 	})();

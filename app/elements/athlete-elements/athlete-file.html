@@ -69,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</table>
     		</div>
     		<div>
-    			<athlete-result athlete="{{athlete}}"></athlete-result>
+    			<athlete-result athlete="{{athlete}}" editEnabled="{{editEnabled}}""></athlete-result>
     		</div>
     	<div>Statistiques</div>
     </iron-pages>
@@ -104,9 +104,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			value: null
 			}
         },
- 		setAthlete: function(ath) {
-        	this.dbAthlete = ath;
-        },
+   		setAthlete: function(ath) {
+          	this.dbAthlete = ath;
+          },
         loadAthlete: function(val){
         	var me = this;
         	var ref = new Firebase(app.firebaseURL + '/athletes/' + val);
