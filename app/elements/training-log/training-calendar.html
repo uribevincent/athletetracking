@@ -99,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		.card-name { color: var(--paper-grey-600); margin: 10px 0; }
 
 		paper-button {
-		    min-width: 0px;
+			min-width: 0px;
 		}
 		 paper-dialog.form {
 		 	width: 50%;
@@ -109,21 +109,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<iron-pages selected="{{selectedPage}}">
 	<div>
 		<div>
-			<paper-dropdown-menu label="Mois" >
-			<paper-listbox class="dropdown-content monthPicker" attr-for-selected="value" selected="{{month}}">
-				<template is="dom-repeat" items="[[monthes]]">
-					<paper-item value="{{item.id}}" class="month">{{item.name}}</paper-item>
-				</template>
-			</paper-listbox>
-			</paper-dropdown-menu>
-
-
-			<paper-dropdown-menu flex	label="Année">
-			<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{year}}">
-				<paper-item value="2016">2016</paper-item>
-				<paper-item value="2017">2017</paper-item>
-			</paper-listbox>
-			</paper-dropdown-menu>
+			<paper-input  label="Date" value="{{month}}" type="month"></paper-input>
 		</div>
 		<div class="container flex">
 			<template is="dom-repeat" items="[[days]]" as="day" >
@@ -174,16 +160,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 				<paper-textarea  label="Séance prévue" value="{{currentEvent.session.scheduled}}"></paper-textarea>
 				<paper-textarea  label="Séance réalisée" value="{{currentEvent.session.real}}"></paper-textarea>
-				<paper-input  label="Distance totale" value="{{currentEvent.distance}}"></paper-input>
-				<paper-input  label="Temps total" value="{{currentEvent.time}}"></paper-input>
-				<paper-slider label="Fréquence cardiaque moyenne" value="{{currentEvent.distance.heartFrequency}}" max="220" editable></paper-slider>
-				<paper-slider label="Rate PE" pin snaps max="10" max-markers="10" step="1" value="{{currentEvent.rpe}}"></paper-slider>
+				<paper-input  label="Distance totale" value="{{currentEvent.distance}}" pattern="[0-9]*"></paper-input>
+				<paper-input  label="Temps total" value="{{currentEvent.time}}" type="time" step="1" ></paper-input>
+				Fréquence cardiaque moyenne <paper-slider pin value="{{currentEvent.distance.heartFrequency}}" max="220"></paper-slider>
+				RPE <paper-slider pin snaps max="10" max-markers="10" step="1" value="{{currentEvent.rpe}}"></paper-slider>
 				<paper-textarea  label="Commentaire" value="{{currentEvent.comment}}"></paper-textarea>
 
 				<div class="buttons">
-			       	<paper-button raised on-tap="saveEvent">Enregistrer</paper-button>
-		       		<paper-button on-tap="cancelEvent">Annuler</paper-button>
-			    </div>
+				   	<paper-button raised on-tap="saveEvent">Enregistrer</paper-button>
+			   		<paper-button on-tap="cancelEvent">Annuler</paper-button>
+				</div>
 			</form>
 	</div>
 	</iron-pages>
@@ -201,11 +187,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					type: String,
 					notify: true
 				},
-				year: {
-					type: String,
-					notify: true
-				},
-
 				days: {
 					type: Array,
 					notify: true
@@ -215,6 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					type: Number,
 					value: 0,
 				},
+				selectedDate: Object,
 				monthes: {
 					type: Array,
 					value: [
@@ -235,7 +217,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				}
 			},
 
-			observers: [ "computeCalendar(month, year)"],
+			observers: [ "computeCalendar(month)"],
 
 			ready: function(){
 				//this.month = "05";
@@ -252,12 +234,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			},
 			openDialog: function(e){
 				if(e.currentTarget.className.startsWith('newEvent')){
-        			this.currentEvent = {dayNumber: e.currentTarget.dataArg.dayNumber};
-        		}
-        		else{
-        			this.currentEvent = e.currentTarget.dataLog;
-        		}
-        		this.selectedPage = 1;
+					this.currentEvent = {dayNumber: e.currentTarget.dataArg.dayNumber};
+				}
+				else{
+					this.currentEvent = e.currentTarget.dataLog;
+				}
+				this.selectedPage = 1;
 				/*var dialog = document.getElementById("modal2");
 				if (dialog) {
 					dialog.open();
@@ -283,10 +265,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				});
 				return {day: dIndex, log: lIndex};
 			},
-			computeCalendar: function(m,y){
-				if(m !== undefined && y !== undefined){
+			computeCalendar: function(m){
+				if(m !== "" ){
 					this.days = new Array();
-					var date = new Date(y, m, 0);
+					var date = new Date(m.substring(0,4), m.substring(5), 0);
+					this.selectedDate = {};
+					this.selectedDate.year = m.substring(0,4);
+					this.selectedDate.month = m.substring(5);
 					var limit = parseInt(date.getDate());
 					var diff = this.getDaysToMonday(date);
 					//add empty days
@@ -306,7 +291,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					//Get logs
 					var me = this;
 
-					var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid +'/' + y + '/' + m);
+					var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid +'/' + this.selectedDate.year + '/' + this.selectedDate.month);
 					ref.on('child_added', function(snapshot) {
 						var newLog = snapshot.val();
 						var dIndex = me.getDayIndex(newLog.dayNumber, diff);
@@ -352,7 +337,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			},
 			saveEvent: function(e){
 				var me = this;
-				var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + this.year + '/' + this.month);
+				var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + this.selectedDate.year + '/' + this.selectedDate.month);
 				if(me.currentEvent.uid !== undefined){
 					ref.child(me.currentEvent.uid).set({
 						type: me.currentEvent.type,
@@ -372,10 +357,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					ref.push(me.currentEvent);
 				}
 
-        		this.selectedPage = 0;
+				this.selectedPage = 0;
 			},
-			cancelEvent: function(){				
-        		this.selectedPage = 0;
+			cancelEvent: function(){
+				this.selectedPage = 0;
 			}
 		});
 	})();

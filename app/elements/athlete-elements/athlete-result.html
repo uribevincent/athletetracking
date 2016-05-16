@@ -48,12 +48,12 @@
 	</paper-material>
 
 	<!--<paper-dialog id="modal">-->
-	
+
     <paper-material elevation="1"  style="overflow-x:auto;">
 			<h2>Nouveau résultat de compétition</h2>
 
 		<form is="iron-form">
-			<paper-input label="Date" value="{{raceDate}}" requiered error-message="DD/MM/YYY" auto-validate pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"></paper-input>
+			<paper-input label="Date" value="{{raceDate}}" requiered auto-validate type="date"></paper-input>
 			<paper-dropdown-menu label="Distance">
 				<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{raceDistance}}">
 						<paper-item value="Marathon" >Marathon</paper-item>
@@ -67,10 +67,10 @@
 				</paper-listbox>
 			</paper-dropdown-menu>
 			<paper-input label="Compétition" value="{{raceName}}" required ></paper-input>
-			<paper-input label="Temps officiel" value="{{raceOfficialTime}}" required ></paper-input>
-			<paper-input label="Temps réel" value="{{raceRealTime}}"></paper-input>
-			<paper-input label="Position générale" value="{{raceGlobalPosition}}"></paper-input>
-			<paper-input label="Position catégorie" value="{{raceCategoryPosition}}"></paper-input>
+			<paper-input label="Temps officiel" value="{{raceOfficialTime}}" required type="time" step="1"></paper-input>
+			<paper-input label="Temps réel" value="{{raceRealTime}}" type="time" step="1" ></paper-input>
+			<paper-input label="Position générale" value="{{raceGlobalPosition}}" type="number"></paper-input>
+			<paper-input label="Position catégorie" value="{{raceCategoryPosition}}" type="number"></paper-input>
 			<div class="buttons">
 	        	<paper-button on-tap="addRace">Enregistrer</paper-button>
         		<paper-button on-tap="cancelRace">Annuler</paper-button>
@@ -147,9 +147,9 @@
         			global: me.raceGlobalPosition,
         			categoryPosition: me.raceCategoryPosition
         		}
-        	}); 
+        	});
         	var mm = (raceDate.getMonth()+1).toString(); // getMonth() is zero-based
-  
+
         	var logRef = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + raceDate.getFullYear() + '/' + (mm[1]?mm:"0"+mm[0]));
 			logRef.push({
 				type: 'race',
