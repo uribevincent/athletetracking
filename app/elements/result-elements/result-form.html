@@ -1,0 +1,93 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="result-form">
+	<template>
+
+		<h2>Nouveau résultat de compétition</h2>
+
+		<form is="iron-form">
+			<paper-input label="Date" value="{{result.date}}" requiered auto-validate type="date"></paper-input>
+			<paper-dropdown-menu label="Distance">
+				<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{result.distance}}">
+						<paper-item value="Marathon" >Marathon</paper-item>
+						<paper-item value="21K" >Semi-marathon</paper-item>
+						<paper-item value="10K" >10 km</paper-item>
+						<paper-item value="5K" >5 km</paper-item>
+						<paper-item value="1500" >1500 m</paper-item>
+						<paper-item value="3000" >3000 m</paper-item>
+						<paper-item value="5000" >5000 m</paper-item>
+						<paper-item value="10000" >10000 m</paper-item>
+				</paper-listbox>
+			</paper-dropdown-menu>
+			<paper-input label="Compétition" value="{{result.name}}" required ></paper-input>
+			<paper-input label="Temps officiel" value="{{result.time.official}}" required type="time" step="1"></paper-input>
+			<paper-input label="Temps réel" value="{{result.time.real}}" type="time" step="1" ></paper-input>
+			<paper-input label="Position générale" value="{{result.position.global}}" type="number"></paper-input>
+			<paper-input label="Position catégorie" value="{{result.position.category}}" type="number"></paper-input>
+			<div class="buttons">
+				<paper-button on-tap="addRace">Enregistrer</paper-button>
+				<paper-button on-tap="cancelRace">Annuler</paper-button>
+			</div>
+		</form>
+</template>
+
+	<script>
+	(function() {
+		'use strict';
+
+		Polymer({
+		is: 'result-form',
+
+		properties: {
+			result: {
+				type: Object,
+				notify: true,
+				value: null
+			}		},
+
+		addRace: function(){
+			var me = this;
+			var raceDate = new Date(me.raceDate);
+			var ref = new Firebase(app.firebaseURL + '/results/' + app.authData.uid);
+			ref.push({
+				date: raceDate,
+				distance: me.raceDistance,
+				name: me.raceName,
+				time: {
+					real: me.raceRealTime,
+					official: me.raceOfficialTime
+				},
+				position: {
+					global: me.raceGlobalPosition,
+					category: me.raceCategoryPosition
+				}
+			});
+			var mm = (raceDate.getMonth()+1).toString(); // getMonth() is zero-based
+
+			var logRef = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + raceDate.getFullYear() + '/' + (mm[1]?mm:"0"+mm[0]));
+			logRef.push({
+				type: 'race',
+				dayNumber: raceDate.getDate() + 1,
+				distance: me.raceDistance,
+				name: me.raceName,
+				time: {
+					real: me.raceRealTime,
+					official: me.raceOfficialTime
+				},
+				position: {
+					global: me.raceGlobalPosition,
+					category: me.raceCategoryPosition
+				}
+			});
+				this.selectedPage = 0;
+
+		},
+		cancelRace: function(){
+
+				this.selectedPage = 0;
+			}
+		});
+	})();
+	</script>
+</dom-module>
