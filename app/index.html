@@ -170,8 +170,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <paper-material elevation="1">
                 <h1 class="page-title" tabindex="-1">Athletes</h1>
                 <p>This is the athletes section</p>
+					<athlete-data athletes="{{athletes}}" user="{{isLogged}}"></athlete-data>
+	             	<athlete-view athletes="{{athletes}}" ></athlete-view>
               </paper-material>
-             	<athlete-list></athlete-list>
             </section>
 
             <section data-route="athlete-info" tabindex="-1">
@@ -201,8 +202,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
     </paper-toast>
 
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
+
     <paper-toast id="caching-complete"
                  duration="6000"
                  text="Caching complete! This app will work offline.">
@@ -217,7 +217,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                          cache-config-file="cache-config.json">
       </platinum-sw-cache>
     </platinum-sw-register>
-    -->
 
   </template>
 

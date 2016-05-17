@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="result-item">
+	<template>
+		<paper-card>
+			<table>
+				<tbody>
+					<tr>
+						<td>Date</td><td>{{result.date}}</td>
+					</tr>
+					<tr>
+						<td>Distance</td><td>{{result.distance}}</td>
+					</tr>
+					<tr>
+						<td>Compétition</td><td>{{result.name}}</td>
+					</tr>
+					<tr>
+						<td>Temps réel</td><td>{{result.time.real}}</td>
+					</tr>
+					<tr>
+						<td>Temps officiel</td><td>{{result.time.official}}</td>
+					</tr>
+					<tr>
+						<td>Position générale</td><td>{{result.position.global}}</td>
+					</tr>
+					<tr>
+						<td>Position catégorie</td><td>{{result.position.category}}</td>
+					</tr>
+					<tr colspan="2">
+						<td><paper-button on-tap="_selectResult">Visualiser</paper-button></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</paper-card>
+	</template>
+
+	<script>
+		(function() {
+			'use strict';
+			Polymer({
+				is: 'result-item',
+				properties: {
+			 		result: Object
+				},
+				_selectResult: function(){
+					this.fire('select-result', {result: this.result});
+				}
+			});
+		})();
+	</script>
+</dom-module>

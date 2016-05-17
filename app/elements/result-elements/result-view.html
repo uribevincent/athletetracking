@@ -1,0 +1,32 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="result-view">
+	<template>
+	<h1>toto</h1>
+		<iron-pages selected="{{selectedPage}}">
+			<result-list results="{{results}}" on-select-result="_selectResult"></result-list>
+			<result-form result="{{selectedResult}}"></result-file>
+		</iron-pages>
+	</template>
+
+	<script>
+		(function() {
+			'use strict';
+			Polymer({
+				is: 'result-view',
+				properties: {
+			 		results: Array,
+			 		selectedPage: {
+			 			type: Number,
+			 			value: 0
+			 		}
+				},
+				_selectResult: function(e){
+					this.selectedPage = 1;
+					this.selectedResult = e.detail.result;
+				}
+			});
+		})();
+	</script>
+</dom-module>

@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 
-<dom-module id="athlete-list">
+<dom-module id="result-list">
 	<template>
 		<style include="shared-styles">
 			:host {
@@ -27,20 +27,20 @@
 
 
 		<div class="container flex">
-			<template is="dom-repeat" items="[[athletes]]" as="athlete">
-				<athlete-card athlete="[[athlete]]" on-select-athlete="_athleteSelected"></athlete-card>
+			<template is="dom-repeat" items="[[results]]" as="result">
+				<result-item result="[[result]]" on-select-result="_resultSelected"></result-item>
 			</template>
 		</div>
 	</template>
 
 	<script>
 		Polymer({
-			is: 'athlete-list',
+			is: 'result-list',
 			properties:{
-				athletes: Array
+				results: Array
 			},
-			_athleteSelected: function(e){
-				this.fire('select-athlete', {athlete: e.detail.athlete});
+			_resultSelected: function(e){
+				this.fire('select-result', {result: e.detail.result});
 			}
 		});
 	</script>

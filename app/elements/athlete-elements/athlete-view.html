@@ -1,0 +1,32 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="athlete-list.html">
+
+<dom-module id="athlete-view">
+	<template>
+		<iron-pages selected="{{selectedPage}}">
+			<athlete-list athletes="{{athletes}}" on-select-athlete="_selectAthlete"></athlete-list>
+			<athlete-file athlete="{{selectedAthlete}}"></athlete-file>
+		</iron-pages>
+	</template>
+
+	<script>
+		(function() {
+			'use strict';
+			Polymer({
+				is: 'athlete-view',
+				properties: {
+			 		athletes: Array,
+			 		selectedPage: {
+			 			type: Number,
+			 			value: 0
+			 		}
+				},
+				_selectAthlete: function(e){
+					this.selectedPage = 1;
+					this.selectedAthlete = e.detail.athlete;
+				}
+			});
+		})();
+	</script>
+</dom-module>

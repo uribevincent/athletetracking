@@ -1,0 +1,29 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="athlete-card">
+	<template>
+		<paper-card heading="Card Title" image="http://placehold.it/350x150/FFC107/000000" >
+			<div class="card-content">[[athlete.name]]</div>
+			<div class="card-actions">
+				<paper-button on-tap="_selectAthlete">Visualiser</a>
+				</paper-button>
+			</div>
+		</paper-card>
+	</template>
+
+	<script>
+		(function() {
+			'use strict';
+			Polymer({
+				is: 'athlete-card',
+				properties: {
+			 		athlete: Object
+				},
+				_selectAthlete: function(){
+					this.fire('select-athlete', {athlete: this.athlete});
+				}
+			});
+		})();
+	</script>
+</dom-module>

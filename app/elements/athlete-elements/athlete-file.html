@@ -12,113 +12,97 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 
 <dom-module id="athlete-file">
-  <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-      }
+<template>
+<style include="shared-styles">
+	:host {
+	display: block;
+	}
 
-      span,
-      input {
-        @apply(--paper-font-body2);
-      }
-    </style>
-    <h1  class="page-title" tabindex="-1">{{dbAthlete.name}}</h1>
-    <paper-tabs selected="{{selected}}" >
-    	<paper-tab>Informations</paper-tab>
-    	<paper-tab>Résultats</paper-tab>
-    	<paper-tab>Statistiques</paper-tab>
-    </paper-tabs>
-    	<iron-pages selected="{{selected}}">
+	span,
+	input {
+	@apply(--paper-font-body2);
+	}
+</style>
+<h1 class="page-title" tabindex="-1">{{athlete.name}}</h1>
+<paper-tabs selected="{{selected}}" >
+	<paper-tab>Informations</paper-tab>
+	<paper-tab>Résultats</paper-tab>
+	<paper-tab>Statistiques</paper-tab>
+</paper-tabs>
 
-    		<div>
+	<iron-pages selected="{{selected}}">
 
-	    			  	<template is="dom-if" if="{{editEnabled}}">
+		<div>
 
-			    					<paper-input label="Licence FFA" value="{{dbAthlete.licenceNumber}}"></paper-input>
-			    					<paper-input label="Date de naissance" value="{{dbAthlete.birthDate}}"></paper-input>
-			    			    					<paper-input label="Taille" value="{{dbAthlete.height}}"></paper-input>
-			    					<paper-input label="Poids" value="{{dbAthlete.weight}}"></paper-input>
+					<template is="dom-if" if="{{editEnabled}}">
 
-			    					<paper-input label="VMA Estimée" value="{{dbAthlete.vma}}"></paper-input>
+								<paper-input label="Licence FFA" value="{{athlete.licenceNumber}}"></paper-input>
+								<paper-input label="Date de naissance" value="{{athlete.birthDate}}"></paper-input>
+											<paper-input label="Taille" value="{{athlete.height}}"></paper-input>
+								<paper-input label="Poids" value="{{athlete.weight}}"></paper-input>
 
-			    					<paper-input label="Disponibilités" value="{{dbAthlete.availability}}"></paper-input>
+								<paper-input label="VMA Estimée" value="{{athlete.vma}}"></paper-input>
 
-		    			</template>
-		    			<template is="dom-if" if="{{!editEnabled}}">
-		    				<tr>
-			    				<td>Licence</td><td>{{dbAthlete.licenceNumber}}</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Age</td><td>{{dbAthlete.age}}</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Taille</td><td>{{dbAthlete.height}}</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Poids</td><td>{{dbAthlete.weight}}</td>
-			    			</tr>
-		    				<tr>
-			    				<td>VMA Estimée</td><td>{{dbAthlete.vma}}</td>
-			    			</tr>
-		    				<tr>
-			    				<td>Disponibilités</td><td>{{dbAthlete.availability}}</td>
-			    			</tr>
-		    			</template>
-	    			</tbody>
-    			</table>
-    		</div>
-    		<div>
-    			<athlete-result athlete="{{athlete}}" editEnabled="{{editEnabled}}""></athlete-result>
-    		</div>
-    	<div>Statistiques</div>
-    </iron-pages>
-  </template>
+								<paper-input label="Disponibilités" value="{{athlete.availability}}"></paper-input>
 
-  <script>
-    (function() {
-      'use strict';
+					</template>
+					<template is="dom-if" if="{{!editEnabled}}">
+						<tr>
+							<td>Licence</td><td>{{athlete.licenceNumber}}</td>
+						</tr>
+						<tr>
+							<td>Age</td><td>{{athlete.age}}</td>
+						</tr>
+						<tr>
+							<td>Taille</td><td>{{athlete.height}}</td>
+						</tr>
+						<tr>
+							<td>Poids</td><td>{{athlete.weight}}</td>
+						</tr>
+						<tr>
+							<td>VMA Estimée</td><td>{{athlete.vma}}</td>
+						</tr>
+						<tr>
+							<td>Disponibilités</td><td>{{athlete.availability}}</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</div>
+		<div>
+			<result-data athlete="{{athlete}}" results="{{results}}"></result-data>
+			<result-view results="{{results}}" editEnabled="{{editEnabled}}"></result-view>
+			<!--<athlete-result athlete="{{athlete}}" editEnabled="{{editEnabled}}"></athlete-result>-->
+		</div>
+	<div>Statistiques</div>
+</iron-pages>
+</template>
 
-      Polymer({
-        is: 'athlete-file',
+<script>
+(function() {
+'use strict';
+	Polymer({
+		is: 'athlete-file',
 
-        properties: {
-        	editEnabled: {
-        		type: Boolean,
-        		value: false
-        	},
-
-        	selected: {
+		properties: {
+			selected: {
 				type: Number,
-        		value: 0
-        	},
-          	athlete: {
+				value: 0
+			},
+			athlete: {
 				type: String,
 				notify: true,
-				reflectToAttribute: true,
-				observer: "loadAthlete"
 			},
-			dbAthlete: {
-			type: Object,
-			notify: true,
-			value: null
-			}
-        },
-   		setAthlete: function(ath) {
-          	this.dbAthlete = ath;
-          },
-        loadAthlete: function(val){
-        	var me = this;
-        	var ref = new Firebase(app.firebaseURL + '/athletes/' + val);
-        	this.editEnabled = val === app.authData.uid;
-        	ref.on('value', function(snapshot) {
-        		var data = snapshot.val();
-        		me.setAthlete(data);
-        	});
-        }
-
-
-      });
-    })();
-  </script>
+			editEnabled: {
+				type: Boolean,
+				value: false,
+				computed: '_isEditable(athlete)'
+			},
+		},
+		_isEditable: function(a){
+			return a.__firebaseKey__ === app.authData.uid;
+		}
+	});
+})();
+</script>
 </dom-module>
