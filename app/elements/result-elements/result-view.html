@@ -3,10 +3,12 @@
 
 <dom-module id="result-view">
 	<template>
-	<h1>toto</h1>
 		<iron-pages selected="{{selectedPage}}">
 			<result-list results="{{results}}" on-select-result="_selectResult"></result-list>
-			<result-form result="{{selectedResult}}"></result-file>
+			<div>
+				<paper-button on-tap="_goList">Liste</paper-button><br>
+				<result-form result="{{selectedResult}}" on-close="_goList"></result-file>
+			</div>
 		</iron-pages>
 	</template>
 
@@ -25,6 +27,10 @@
 				_selectResult: function(e){
 					this.selectedPage = 1;
 					this.selectedResult = e.detail.result;
+				},
+				_goList: function(){
+					this.selectedPage = 0;
+					this.selectedResult = null;
 				}
 			});
 		})();

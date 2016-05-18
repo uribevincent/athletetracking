@@ -3,9 +3,8 @@
 
 <dom-module id="result-form">
 	<template>
-
-		<h2>Nouveau résultat de compétition</h2>
-
+		<h3 hidden$="{{!isNew}}">Nouveau résultat de compétition</h3>
+		<h3 hidden$="{{isNew}}">Résultat de compétition</h3>
 		<form is="iron-form">
 			<paper-input label="Date" value="{{result.date}}" requiered auto-validate type="date"></paper-input>
 			<paper-dropdown-menu label="Distance">
@@ -44,18 +43,23 @@
 				type: Object,
 				notify: true,
 				value: null
-			}		},
-
+			},
+			isNew: Boolean
+		},
+		observers: ['_isNull(result)'],
+		_isNull: function(r){
+			this.isNew = r === null || r === undefined;
+		},
 		addRace: function(){
 			var me = this;
 			var raceDate = new Date(me.raceDate);
 			var ref = new Firebase(app.firebaseURL + '/results/' + app.authData.uid);
 			ref.push({
-				date: raceDate,
-				distance: me.raceDistance,
-				name: me.raceName,
+				date: me.result.date,
+				distance: me.result.distance,
+				name: me.result.name,
 				time: {
-					real: me.raceRealTime,
+					real: me.result.time.real,
 					official: me.raceOfficialTime
 				},
 				position: {
@@ -80,12 +84,12 @@
 					category: me.raceCategoryPosition
 				}
 			});
-				this.selectedPage = 0;
+			app.displayMessageToast('Résultat enregistré');
+			this.fire('close');
 
 		},
 		cancelRace: function(){
-
-				this.selectedPage = 0;
+			this.fire('close');
 			}
 		});
 	})();
