@@ -2,16 +2,44 @@
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 
 <dom-module id="result-item">
+	<style is="custom-style">
+	.result { /*@apply(--layout-horizontal);*/ max-width: 250px;}
+	/**/
+	.result-image {
+		width: 100%;
+		height: 10px;
+		/*height: 170px;*/
+		/*background: url('http://placehold.it/100x170/FFC107/000000');
+		background-size: cover;*/
+	}
+
+		.-Marathon {
+			background-color: red;
+		}
+
+		.-10K {
+			background-color: green;
+		}
+	.result-content {
+		@apply(--layout-flex);
+		float: left;
+	}
+	.result-header { @apply(--paper-font-headline); }
+	.result-name { color: var(--paper-grey-600); margin: 10px 0; }
+	</style>
 	<template>
-		<paper-card image="http://placehold.it/350x150/FFC107/000000">
-			<div class="card-content" >
-				<div class="rate-header">[[result.name]]</div>
-				<div class="rate-name">[[result.distance]] - [[result.date]]</div>
-				<div>[[result.time.real]]</div>
+		<paper-card class="result">
+			<div class="result-content" >
+				<div class="card-content">
+					<div class="result-header">[[result.name]]</div>
+					<div class="result-name">[[result.distance]] - [[result.date]]</div>
+					<div>[[result.time_real]]</div>
+				</div>
+				<div class="card-actions">
+					<paper-button on-tap="_selectResult">Visualiser</paper-button>
+				</div>
 			</div>
-			<div class="card-actions">
-				<paper-button on-tap="_selectResult">Visualiser</paper-button>
-			</div>
+  			<div class$="result-image -{{result.distance}}"></div>
 		</paper-card>
 	</template>
 

@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 
-<dom-module id="result-view">
+<dom-module id="training-view">
 	<style is="custom-style">
 	/*paper-header-panel {
       position: absolute;
@@ -30,16 +30,19 @@
 	<template>
 		<paper-header-panel fixed>
 			<paper-toolbar>
-				<paper-icon-button icon="arrow-back" on-tap="_goList" hidden$="{{!selectedPage}}"></paper-icon-button>
-				<div class="spacer title">Résultats</div>
-				<paper-icon-button icon="add" on-tap="_newResult" hidden$="{{!editable}}"></paper-icon-button>
+				<div class="spacer title">Carnet d'entraînement</div>
+				<paper-icon-button icon="book" on-tap="_goBook"></paper-icon-button>
+				<paper-icon-button icon="event" on-tap="_goCalendar"></paper-icon-button>
 
 			</paper-toolbar>
 
 			<div class="content">
+				<div>
+					<paper-input  label="Date" value="{{date}}" type="month"></paper-input>
+				</div>
 				<iron-pages selected="{{selectedPage}}">
-					<result-list results="{{results}}" on-select-result="_selectResult"></result-list>
-					<result-form result="{{selectedResult}}" editable="{{editable}}" on-close="_goList"></result-form>
+					<training-book trainings="{{trainings}}"  on-select-training="_selectResult"></training-book>
+					<training-calendar trainings="{{trainings}}" date="{{date}}" editable="{{editable}}" on-add-training="_test"></training-calendar>
 				</iron-pages>
 			</div>
 		</paper-header-panel>
@@ -49,9 +52,11 @@
 		(function() {
 			'use strict';
 			Polymer({
-				is: 'result-view',
+				is: 'training-view',
 				properties: {
-			 		results: Array,
+					trainings: {
+						notify: true
+					},
 			 		athlete: Object,
 			 		editable: {
 			 			type: Boolean,
@@ -60,20 +65,28 @@
 			 		selectedPage: {
 			 			type: Number,
 			 			value: 0
-			 		}
+			 		},
+					date: {
+						type: String,
+						notify: true
+					}
+				},
+				_test: function(e){
+					this.push('trainings', e.detail.training);
 				},
 				_selectResult: function(e){
-					this.selectedResult = e.detail.result;
+					this.selectedResult = e.detail.training;
 					this.selectedPage = 1;
 				},
-				_goList: function(){
+				_goBook: function(){
 					this.selectedPage = 0;
-					this.selectedResult = null;
+				},
+				_goCalendar: function(){
+					this.selectedPage = 1;
 				},
 				_newResult: function(){
 					this.selectedResult = {};
 					this.selectedPage = 1;
-
 				}
 			});
 		})();

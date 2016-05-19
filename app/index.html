@@ -167,24 +167,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </section>
 
             <section data-route="athletes" tabindex="-1">
-              <paper-material elevation="1">
-                <h1 class="page-title" tabindex="-1">Athletes</h1>
-                <p>This is the athletes section</p>
+              <paper-material elevation="1" >
 					<athlete-data athletes="{{athletes}}" user="{{isLogged}}"></athlete-data>
 	             	<athlete-view athletes="{{athletes}}" ></athlete-view>
-              </paper-material>
-            </section>
-
-            <section data-route="athlete-info" tabindex="-1">
-              <paper-material elevation="1">
-               	<athlete-file athlete="{{params.id}}"></athlete-file>
               </paper-material>
             </section>
 
             <section data-route="training-log" tabindex="-1">
               <paper-material elevation="1">
                 <h1 class="page-title" tabindex="-1">Carnet d'entraînement</h1>
-                <training-calendar></training-calendar>
+
+                <training-data trainings="{{trainings}}" date="{{lDate}}"></training-data>
+                <training-view trainings="{{trainings}}" date="{{lDate}}"></training-view>
               </paper-material>
             </section>
 

@@ -1,0 +1,65 @@
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-collection.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
+
+<dom-module id="training-data">
+	<template>
+
+	<firebase-collection
+		location="{{location}}"
+		data="{{fbTrainings}}"
+		on-firebase-value="_firebaseLoaded"
+		on-firebase-added="_firebaseLoaded">
+	</firebase-collection>
+		<!-- Backfill todos from localstorage. This prevents an initial flash while
+				 we're waiting to hear from Firebase, and it lets the user see their
+				 old todos if they start the app offline.
+				 This SHOULD NOT write to Firebase. If the user has cleared their
+				 localstorage, it should not nullify everything saved in Firebase. -->
+	<!--<iron-localstorage name="polymer-todo"
+		on-iron-localstorage-load="_backupLoaded"
+		value="{{backupAthletes}}">
+	</iron-localstorage>-->
+
+	</template>
+	<script>
+		Polymer({
+			is: 'training-data',
+			properties: {
+				trainings: {
+					notify: true
+				},
+				athlete: Object,
+				date: {
+					notify: true
+				},
+				_firebaseConnected: {
+					value: false
+				}
+			},
+			observers: ['_locationChanged(date)'],
+			// Setup user ref in firebase if auth succeeds
+			_locationChanged: function(/*ath,*/ d) {
+				if (d) {
+					this.location = [app.firebaseURL, '/training-log/', app.authData.uid, d.substring(0,4), d.substring(5)].join('/');
+				}
+			},
+			_firebaseLoaded: function() {
+				if(this.location){
+					this._firebaseConnected = true;
+					this.trainings = this.fbTrainings;
+					//this.backupTrainings = this.fbTrainings;
+					this.linkPaths('fbTrainings', 'trainings');
+					//this.linkPaths('backupTrainings', 'trainings');
+				}
+			},
+			_backupLoaded: function() {
+				if (!this._firebaseConnected) {
+					this.trainings = this.backupTrainings.slice();
+				}
+			}
+		});
+	</script>
+</dom-module>

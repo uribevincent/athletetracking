@@ -4,6 +4,8 @@
 
 <dom-module id="athlete-view">
 	<template>
+
+		<h1 class="page-title" tabindex="-1"><paper-button on-tap="_goList">Athletes</paper-button></h1>
 		<iron-pages selected="{{selectedPage}}">
 			<athlete-list athletes="{{athletes}}" on-select-athlete="_selectAthlete"></athlete-list>
 			<athlete-file athlete="{{selectedAthlete}}"></athlete-file>
@@ -21,6 +23,9 @@
 			 			type: Number,
 			 			value: 0
 			 		}
+				},
+				_goList(){
+					this.selectedPage = 0;
 				},
 				_selectAthlete: function(e){
 					this.selectedPage = 1;

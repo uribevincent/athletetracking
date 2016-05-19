@@ -108,9 +108,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 	<iron-pages selected="{{selectedPage}}">
 	<div>
-		<div>
-			<paper-input  label="Date" value="{{month}}" type="month"></paper-input>
-		</div>
 		<div class="container flex">
 			<template is="dom-repeat" items="[[days]]" as="day" >
 				<template is="dom-if" if="{{!day}}">
@@ -152,14 +149,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		<h2>Nouvel évènement</h2>
 			<form is="iron-form">
 				<paper-dropdown-menu flex	label="Type">
-				<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{currentEvent.type}}">
-					<paper-item value="training">Entraînement</paper-item>
+					<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{currentEvent.type}}">
+						<paper-item value="running">Course à pied</paper-item>
+						<paper-item value="cycling">Cyclisme</paper-item>
+						<paper-item value="swimming">Natation</paper-item>
+						<paper-item value="tennis">Tennis</paper-item>
 						<paper-item value="race">Compétition</paper-item>
 					</paper-listbox>
-					</paper-dropdown-menu>
+				</paper-dropdown-menu>
 
-				<paper-textarea  label="Séance prévue" value="{{currentEvent.session.scheduled}}"></paper-textarea>
-				<paper-textarea  label="Séance réalisée" value="{{currentEvent.session.real}}"></paper-textarea>
+				<paper-textarea  label="Séance prévue" value="{{currentEvent.session_scheduled}}"></paper-textarea>
+				<paper-textarea  label="Séance réalisée" value="{{currentEvent.session_real}}"></paper-textarea>
 				<paper-input  label="Distance totale" value="{{currentEvent.distance}}" pattern="[0-9]*"></paper-input>
 				<paper-input  label="Temps total" value="{{currentEvent.time}}" type="time" step="1" ></paper-input>
 				Fréquence cardiaque moyenne <paper-slider pin value="{{currentEvent.distance.heartFrequency}}" max="220"></paper-slider>
@@ -183,46 +183,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			is: 'training-calendar',
 
 			properties: {
-				month: {
-					type: String,
-					notify: true
-				},
-				days: {
-					type: Array,
-					notify: true
-				},
 				currentEvent: Object,
 				selectedPage: {
 					type: Number,
 					value: 0,
 				},
-				selectedDate: Object,
-				monthes: {
-					type: Array,
-					value: [
-						{id: "01", name: "Janvier"},
-						{id: "02", name: "Février"},
-						{id: "03", name: "Mars"},
-						{id: "04", name: "Avril"},
-						{id: "05", name: "Mai"},
-						{id: "06", name: "Juin"},
-						{id: "07", name: "Juillet"},
-						{id: "08", name: "Août"},
-						{id: "09", name: "Septembre"},
-						{id: "10", name: "Octobre"},
-						{id: "11", name: "Novembre"},
-						{id: "12", name: "Décembre"}
-					],
+				trainings: {
+					notify: true
+				},
+				date: {
 					notify: true
 				}
 			},
 
-			observers: [ "computeCalendar(month)"],
+			//observers: [ "computeCalendar(month)"],
 
-			ready: function(){
-				//this.month = "05";
-				this.year = "2016";
-			},
+
+			observers: [ "_renderCalendar(trainings)"],
+
+
 			getDaysToMonday: function(d) {
 				var dayOfWeek = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
 				if(dayOfWeek == 0){
@@ -240,11 +219,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					this.currentEvent = e.currentTarget.dataLog;
 				}
 				this.selectedPage = 1;
-				/*var dialog = document.getElementById("modal2");
-				if (dialog) {
-					dialog.open();
-				}*/
 			},
+
 			getDayIndex: function(dayNumber, diff){
 				var index = _.findIndex(this.days, function(d){
 					if(d === null){ return false; }
@@ -265,7 +241,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				});
 				return {day: dIndex, log: lIndex};
 			},
-			computeCalendar: function(m){
+			_renderCalendar: function(arr){
+					this.days = new Array();
+					var year = this.date.substring(0,4);
+					var month = this.date.substring(5);
+					var date = new Date(year, month, 0);
+					var limit = parseInt(date.getDate());
+					var diff = this.getDaysToMonday(date);
+					//add empty days
+					for(var j = 0; j < diff; j++){
+						this.push('days',null);
+					}
+					//Generate month calendar
+					for(var i = 0; i < limit; i++){
+						var o = {
+							fullDate: new Date(year, month, i + 1),
+							dayNumber: i + 1,
+							logs: []
+						};
+						this.push('days',o);
+					}
+
+					//Get logs
+					var me = this;
+					_.each(arr,function(training){
+						var dIndex = me.getDayIndex(training.dayNumber, diff);
+						if(dIndex > -1){
+							training.uid = training.__firebaseKey__;
+							me.push("days.#" + dIndex + ".logs", training);
+						}
+					});
+			},
+			/*computeCalendar: function(m){
 				if(m !== "" ){
 					this.days = new Array();
 					var date = new Date(m.substring(0,4), m.substring(5), 0);
@@ -334,10 +341,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						}
 					});
 				}
-			},
+			},*/
 			saveEvent: function(e){
 				var me = this;
-				var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + this.selectedDate.year + '/' + this.selectedDate.month);
+				var year = this.date.substring(0,4);
+				var month = this.date.substring(5);
+				/*var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
 				if(me.currentEvent.uid !== undefined){
 					ref.child(me.currentEvent.uid).set({
 						type: me.currentEvent.type,
@@ -346,17 +355,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						distance: me.currentEvent.distance,
 						heartFrequency: me.currentEvent.heartFrequency,
 						rpe: me.currentEvent.rpe,
-						session: {
-							real: me.currentEvent.session.real,
-							scheduled: me.currentEvent.session.scheduled
-						},
+						session_real: me.currentEvent.session_real,
+						session_scheduled: me.currentEvent.session_scheduled,
 						time: me.currentEvent.time
 					});
 				}
 				else{
 					ref.push(me.currentEvent);
-				}
-
+				}*/
+				this.fire('add-training', {training : me.currentEvent});
+				app.displayMessageToast('Evènement enregistré');
 				this.selectedPage = 0;
 			},
 			cancelEvent: function(){

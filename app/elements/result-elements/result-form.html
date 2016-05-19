@@ -5,11 +5,11 @@
 	<template>
 		<h3 hidden$="{{!isNew}}">Nouveau résultat de compétition</h3>
 		<h3 hidden$="{{isNew}}">Résultat de compétition</h3>
-		<form is="iron-form">
+		<form is="iron-form" hidden$="{{!editable}}">
 			<paper-input label="Date" value="{{result.date}}" requiered auto-validate type="date"></paper-input>
 			<paper-dropdown-menu label="Distance">
 				<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{result.distance}}">
-						<paper-item value="Marathon" >Marathon</paper-item>
+						<paper-item value="42K" >Marathon</paper-item>
 						<paper-item value="21K" >Semi-marathon</paper-item>
 						<paper-item value="10K" >10 km</paper-item>
 						<paper-item value="5K" >5 km</paper-item>
@@ -20,15 +20,43 @@
 				</paper-listbox>
 			</paper-dropdown-menu>
 			<paper-input label="Compétition" value="{{result.name}}" required ></paper-input>
-			<paper-input label="Temps officiel" value="{{result.time.official}}" required type="time" step="1"></paper-input>
-			<paper-input label="Temps réel" value="{{result.time.real}}" type="time" step="1" ></paper-input>
-			<paper-input label="Position générale" value="{{result.position.global}}" type="number"></paper-input>
-			<paper-input label="Position catégorie" value="{{result.position.category}}" type="number"></paper-input>
+			<paper-input label="Temps officiel" value="{{result.time_official}}" required type="time" step="1"></paper-input>
+			<paper-input label="Temps réel" value="{{result.time_real}}" type="time" step="1" ></paper-input>
+			<paper-input label="Position générale" value="{{result.position_global}}" type="number"></paper-input>
+			<paper-input label="Position catégorie" value="{{result.position_category}}" type="number"></paper-input>
 			<div class="buttons">
 				<paper-button on-tap="addRace">Enregistrer</paper-button>
 				<paper-button on-tap="cancelRace">Annuler</paper-button>
 			</div>
 		</form>
+		<div hidden$="{{editable}}">
+			<table>
+				<tbody>
+					<tr>
+						<td>Date</td> <td>{{result.date}}</td>
+					</tr>
+					<tr>
+						<td>Distance</td> <td>{{result.distance}}</td>
+					</tr>
+					<tr>
+						<td>Compétition</td> <td>{{result.name}}</td>
+					</tr>
+					<tr>
+						<td>Temps officiel</td> <td>{{result.time_official}}</td>
+					</tr>
+					<tr>
+						<td>Temps réel</td> <td>{{result.time_real}}</td>
+					</tr>
+					<tr>
+						<td>Classement global</td> <td>{{result.position_global}}</td>
+					</tr>
+					<tr>
+						<td>Classement par catégorie réel</td> <td>{{result.position_category}}</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
 </template>
 
 	<script>
@@ -44,47 +72,50 @@
 				notify: true,
 				value: null
 			},
-			isNew: Boolean
+			athlete: Object,
+			isNew: Boolean,
+	 		editable: {
+	 			type: Boolean,
+	 			notify: true
+	 		},
 		},
-		observers: ['_isNull(result)'],
-		_isNull: function(r){
-			this.isNew = r === null || r === undefined;
+		observers: ['_hasUid(result)'],
+		_hasUid: function(r){
+			if(r === null) return;
+			this.isNew = !r.hasOwnProperty('__firebaseKey__') && this.editable;
 		},
 		addRace: function(){
 			var me = this;
-			var raceDate = new Date(me.raceDate);
 			var ref = new Firebase(app.firebaseURL + '/results/' + app.authData.uid);
-			ref.push({
-				date: me.result.date,
-				distance: me.result.distance,
-				name: me.result.name,
-				time: {
-					real: me.result.time.real,
-					official: me.raceOfficialTime
-				},
-				position: {
-					global: me.raceGlobalPosition,
-					category: me.raceCategoryPosition
-				}
-			});
+			var raceDate = new Date(me.result.date);
 			var mm = (raceDate.getMonth()+1).toString(); // getMonth() is zero-based
-
 			var logRef = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + raceDate.getFullYear() + '/' + (mm[1]?mm:"0"+mm[0]));
-			logRef.push({
-				type: 'race',
-				dayNumber: raceDate.getDate() + 1,
-				distance: me.raceDistance,
-				name: me.raceName,
-				time: {
-					real: me.raceRealTime,
-					official: me.raceOfficialTime
-				},
-				position: {
-					global: me.raceGlobalPosition,
-					category: me.raceCategoryPosition
-				}
-			});
+			var log = {
+					type: 'race',
+					dayNumber: raceDate.getDate(),
+					distance: me.result.distance,
+					name: me.result.name,
+					time_real: me.result.time_real
+				};
+			var res = {
+					date: me.result.date,
+					distance: me.result.distance,
+					name: me.result.name,
+					time_real: me.result.time_real,
+					time_official: me.result.time_official,
+					position_global: me.result.position_global,
+					position_category: me.result.position_category
+				};
+			if(this.isNew){
+				var newRes = ref.push(res);
+				logRef.child(newRes.key()).update(log);
+			}
+			else{
+				ref.child(me.result.__firebaseKey__).set(res);
+				logRef.child(me.result.__firebaseKey__).update(log);
+			}
 			app.displayMessageToast('Résultat enregistré');
+
 			this.fire('close');
 
 		},
