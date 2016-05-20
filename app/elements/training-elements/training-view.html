@@ -31,8 +31,8 @@
 		<paper-header-panel fixed>
 			<paper-toolbar>
 				<div class="spacer title">Carnet d'entraînement</div>
-				<paper-icon-button icon="book" on-tap="_goBook"></paper-icon-button>
 				<paper-icon-button icon="event" on-tap="_goCalendar"></paper-icon-button>
+				<paper-icon-button icon="book" on-tap="_goBook"></paper-icon-button>
 
 			</paper-toolbar>
 
@@ -41,8 +41,8 @@
 					<paper-input  label="Date" value="{{date}}" type="month"></paper-input>
 				</div>
 				<iron-pages selected="{{selectedPage}}">
-					<training-book trainings="{{trainings}}"  on-select-training="_selectResult"></training-book>
-					<training-calendar trainings="{{trainings}}" date="{{date}}" editable="{{editable}}" on-add-training="_test"></training-calendar>
+					<training-calendar trainings="[[trainings]]" date="{{date}}" editable="{{editable}}" on-add-training="_test"></training-calendar>
+					<training-book trainings="[[trainings]]"  on-select-training="_selectResult"></training-book>
 				</iron-pages>
 			</div>
 		</paper-header-panel>
@@ -57,7 +57,6 @@
 					trainings: {
 						notify: true
 					},
-			 		athlete: Object,
 			 		editable: {
 			 			type: Boolean,
 			 			notify: true
@@ -74,19 +73,11 @@
 				_test: function(e){
 					this.push('trainings', e.detail.training);
 				},
-				_selectResult: function(e){
-					this.selectedResult = e.detail.training;
-					this.selectedPage = 1;
-				},
 				_goBook: function(){
-					this.selectedPage = 0;
+					this.selectedPage = 1;
 				},
 				_goCalendar: function(){
-					this.selectedPage = 1;
-				},
-				_newResult: function(){
-					this.selectedResult = {};
-					this.selectedPage = 1;
+					this.selectedPage = 0;
 				}
 			});
 		})();

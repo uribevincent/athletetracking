@@ -7,8 +7,8 @@
 	<template>
 
 	<firebase-query
-		path="{{location}}"
-		data="{{fbTrainings}}">
+		path="[[location]]"
+		data="{{trainings}}">
 	</firebase-query>
 		<!-- Backfill todos from localstorage. This prevents an initial flash while
 				 we're waiting to hear from Firebase, and it lets the user see their
@@ -28,33 +28,32 @@
 				trainings: {
 					notify: true
 				},
-				athlete: Object,
 				fbTrainings: {
 					type: Object,
-					observer : '_firebaseLoaded'
+					observer: '_firebaseLoaded'
 				},
 				date: {
-					notify: true
+					observer: '_dateChanged'
 				},
 				_firebaseConnected: {
 					value: false
 				}
 			},
-			observers: ['_locationChanged(date)'],
 			// Setup user ref in firebase if auth succeeds
-			_locationChanged: function(/*ath,*/ d) {
-				if (d) {
+			_dateChanged: function(d) {
+				if (d !== "" && app.appUser !== null) {
 					this.location = ['/training-log', app.appUser.uid, d.substring(0,4), d.substring(5)].join('/');
 				}
 			},
 			_firebaseLoaded: function(newData, oldData) {
-				//if(this.location){
+				if(this.location !== undefined){
 					this._firebaseConnected = true;
 					this.trainings = this.fbTrainings;
-					//this.backupTrainings = this.fbTrainings;
+					this.backupTrainings = this.fbTrainings;
 					this.linkPaths('fbTrainings', 'trainings');
-					//this.linkPaths('backupTrainings', 'trainings');
-				//}
+					this.linkPaths('backupTrainings', 'trainings');
+
+				}
 			},
 			_backupLoaded: function() {
 				if (!this._firebaseConnected) {

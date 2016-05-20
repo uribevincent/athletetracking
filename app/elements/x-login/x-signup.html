@@ -53,48 +53,33 @@
         },
 
  		signup: function() {
- 			var ref = new Firebase(app.firebaseURL);
+ 			//var ref = new Firebase(app.firebaseURL);
  			var name = this.name, email = this.email, pwd = this.password, isAthlete = this.isAthlete,
  			isCoach = this.isCoach, birthDate = this.birthDate, licenceNumber = this.licenceNumber,
  			speed = this.speed, height = this.height, weight = this.weight, availability = this.availability;
+			var hasError = false;
 
- 			var user = app.$.auth.signInWithEmailAndPassword(email, pwd)
+ 			var user = firebase.auth().createUserWithEmailAndPassword(email, pwd)
  			.catch(function(error) {
 				// Handle Errors here.
 				var errorCode = error.code;
 				var errorMessage = error.message;
-				if (error) {
-					switch (error.code) {
-						case "EMAIL_TAKEN":
-							console.log("The new user account cannot be created because the email is already in use.");
-							break;
-						case "INVALID_EMAIL":
-							console.log("The specified email is not a valid email.");
-							break;
-						default:
-							console.log("Error creating user:", error);
-					}
+				hasError = true;
+				switch (error.code) {
+					case "EMAIL_TAKEN":
+						console.log("The new user account cannot be created because the email is already in use.");
+						break;
+					case "INVALID_EMAIL":
+						console.log("The specified email is not a valid email.");
+						break;
+					default:
+						console.log("Error creating user:", error);
 				}
 			});
-			ref.createUser({
-			  email: email,
-			  password: pwd
-			}, function(error, userData) {
-			  if (error) {
-			    switch (error.code) {
-			      case "EMAIL_TAKEN":
-			        console.log("The new user account cannot be created because the email is already in use.");
-			        break;
-			      case "INVALID_EMAIL":
-			        console.log("The specified email is not a valid email.");
-			        break;
-			      default:
-			        console.log("Error creating user:", error);
-			    }
-			  } else {
+			if(!hasError){
 			  	if(isAthlete){
 			  		//save athlete
-				  	var athletesRef = ref.child("athletes/" + userData.uid);
+				  	var athletesRef = firebase.database().ref("/athletes/" + user.uid);
 				  	athletesRef.set({
 			  			name: name,
 			  			vma: speed,
@@ -106,29 +91,17 @@
 			  		});
 			  	}
 			  	if(isCoach){
-			  		var coachesRef = ref.child("coaches/" + userData.uid);
+			  		var coachesRef = firebase.database().ref("coaches/" + user.uid);
 				  	coachesRef.set({
 			  			name: name
 			  		});
 			  	}
-						console.log("Successfully created user account with uid:", userData.uid);
-				//login
-				ref.authWithPassword({
-					email    : email,
-					password : pwd
-				}, function(error, authData) {
-					if(!error){
-						app.authData = authData;
-						//redirect
-						app.route = "home";
-						console.log("Successfully logged user account with uid:", authData.uid);
-					}
-				}, {
-				  remember: "default"
-				});
-
 			  }
-			});
+			this.fire('logged-in');
+
+
+
+
         }
 
 

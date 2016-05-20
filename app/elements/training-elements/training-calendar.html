@@ -189,17 +189,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					value: 0,
 				},
 				trainings: {
+					type: Array,
 					notify: true
+					//observer: '_renderCalendar'
 				},
 				date: {
-					notify: true
-				}
+					notify: true,
+					observer: '_renderCalendar'
+				},
+				days: [],
+				diff: 0
 			},
 
 			//observers: [ "computeCalendar(month)"],
 
 
-			observers: [ "_renderCalendar(trainings)"],
+			observers: [ "_updateCalendar(trainings.splices)"],
 
 
 			getDaysToMonday: function(d) {
@@ -241,15 +246,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				});
 				return {day: dIndex, log: lIndex};
 			},
-			_renderCalendar: function(arr){
-					this.days = new Array();
-					var year = this.date.substring(0,4);
-					var month = this.date.substring(5);
+			_updateCalendar: function(changeRecord){
+				if (changeRecord) {
+					var me = this;
+					_.each(changeRecord.indexSplices, function(s){
+						s.removed.forEach(function(log) {
+							console.log(log.$key + ' was removed');
+						});
+						for (var i=0; i<s.addedCount; i++) {
+							var index = s.index + i;
+							var log = s.object[index];
+							console.log('log ' + log.$key + ' added at index ' + index);
+							var dIndex = me.getDayIndex(log.dayNumber, this.diff);
+							if(dIndex > -1){
+								log.uid = log.$key;
+								me.push("days.#" + dIndex + ".logs", log);
+							}
+						}
+					}, this);
+				}
+			},
+			_renderCalendar: function(d){
+
+				this.days = new Array();
+				if(d){
+					var year = d.substring(0,4);
+					var month = d.substring(5);
 					var date = new Date(year, month, 0);
 					var limit = parseInt(date.getDate());
-					var diff = this.getDaysToMonday(date);
+					this.diff = this.getDaysToMonday(date);
 					//add empty days
-					for(var j = 0; j < diff; j++){
+					for(var j = 0; j < this.diff; j++){
 						this.push('days',null);
 					}
 					//Generate month calendar
@@ -261,92 +288,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						};
 						this.push('days',o);
 					}
-
-					//Get logs
-					var me = this;
-					_.each(arr,function(training){
-						var dIndex = me.getDayIndex(training.dayNumber, diff);
-						if(dIndex > -1){
-							training.uid = training.$key;
-							me.push("days.#" + dIndex + ".logs", training);
-						}
-					});
-			},
-			/*computeCalendar: function(m){
-				if(m !== "" ){
-					this.days = new Array();
-					var date = new Date(m.substring(0,4), m.substring(5), 0);
-					this.selectedDate = {};
-					this.selectedDate.year = m.substring(0,4);
-					this.selectedDate.month = m.substring(5);
-					var limit = parseInt(date.getDate());
-					var diff = this.getDaysToMonday(date);
-					//add empty days
-					for(var j = 0; j < diff; j++){
-						this.push('days',null);
-					}
-					//Generate month calendar
-					for(var i = 0; i < limit; i++){
-						var o = {
-							fullDate: new Date(this.year, this.month, i + 1),
-							dayNumber: i + 1,
-							logs: []
-						};
-						this.push('days',o);
-					}
-
-					//Get logs
-					var me = this;
-
-					var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid +'/' + this.selectedDate.year + '/' + this.selectedDate.month);
-					ref.on('child_added', function(snapshot) {
-						var newLog = snapshot.val();
-						var dIndex = me.getDayIndex(newLog.dayNumber, diff);
-						if(dIndex > -1){
-							newLog.uid = snapshot.key();
-							me.push("days.#" + dIndex + ".logs", newLog);
-						}
-					});
-
-					ref.on('child_changed', function(snapshot, previous) {
-						var updatedLog = snapshot.val();
-						updatedLog.uid = snapshot.key();
-						var log = me.findLog(updatedLog.uid);
-						var oldLogIndex = log.day - (diff == 0 ? 0 : diff - 1);
-						var oldLog = me.get('days.#' + oldLogIndex);
-						var dIndex = me.getDayIndex(updatedLog.dayNumber, diff);
-						me.splice("days.#" + oldLogIndex + ".logs", log.log, 1);
-						me.push("days.#" + dIndex + ".logs", updatedLog);
-
-						if(dIndex > -1){
-							var d = me.get('days.#' + dIndex);
-							var index = _.findIndex(d.logs, function(d){
-								return d.uid == snapshot.key();
-							});
-							//day changed
-							if(index > -1) {
-								me.splice("days.#" + dIndex + ".logs", index, 1,updatedLog);
-							}
-						}
-					});
-					ref.on('child_removed', function(snapshot, previous) {
-						var deletedLog = snapshot.val();
-						var dIndex = me.getDayIndex(deletedLog.dayNumber, diff);
-						if(dIndex > -1){
-							var d = me.get('days.#' + dIndex);
-							var index = _.findIndex(d.logs, function(d){
-								return d.uid == snapshot.key();
-							});
-							if(index > -1) me.splice("days.#" + dIndex + ".logs", index, 1);
-						}
-					});
 				}
-			},*/
+			},
 			saveEvent: function(e){
 				var me = this;
 				var year = this.date.substring(0,4);
 				var month = this.date.substring(5);
-				var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
+				//var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
+
+
+				var ref = firebase.database().ref(['/training-log/', app.appUser.uid, year, month].join('/'));
 				if(me.currentEvent.uid !== undefined){
 					ref.child(me.currentEvent.uid).set({
 						type: me.currentEvent.type,
@@ -363,7 +314,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				else{
 					ref.push(me.currentEvent);
 				}
-				this.fire('add-training', {training : me.currentEvent});
+				//this.push('trainings',this.currentEvent);
+				//this.fire('add-training', {training : this.currentEvent});
 				app.displayMessageToast('Evènement enregistré');
 				this.selectedPage = 0;
 			},

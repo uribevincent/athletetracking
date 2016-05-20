@@ -86,10 +86,10 @@
 		},
 		addRace: function(){
 			var me = this;
-			var ref = new Firebase(app.firebaseURL + '/results/' + app.authData.uid);
+			var ref = firebase.database().ref(['/results/', app.authData.uid].join('/'));
 			var raceDate = new Date(me.result.date);
 			var mm = (raceDate.getMonth()+1).toString(); // getMonth() is zero-based
-			var logRef = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + raceDate.getFullYear() + '/' + (mm[1]?mm:"0"+mm[0]));
+			var logRef = firebase.database().ref(['/training-log/', app.appUser.uid, raceDate.getFullYear(), (mm[1]?mm:"0"+mm[0])].join('/'));
 			var log = {
 					type: 'race',
 					dayNumber: raceDate.getDate(),

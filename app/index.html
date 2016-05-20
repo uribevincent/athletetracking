@@ -149,7 +149,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	</paper-tabs>
 	<iron-pages selected="{{selected}}">
 
-            	<x-signup></x-signup>
+            	<x-signup on-logged-in="fbLogin"></x-signup>
             	<x-signon on-logged-in="fbLogin"></x-signon>
          </iron-pages>
          </paper-material>
@@ -178,8 +178,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <paper-material elevation="1">
                 <h1 class="page-title" tabindex="-1">Carnet d'entraînement</h1>
 
-                <training-data trainings="{{trainings}}" date="{{lDate}}"></training-data>
-                <training-view trainings="{{trainings}}" date="{{lDate}}"></training-view>
+                <training-data trainings="{{tr}}"  user="{{isLogged}}" date="{{lDate}}"></training-data>
+                <training-view trainings="{{tr}}" date="{{lDate}}"></training-view>
               </paper-material>
             </section>
 
