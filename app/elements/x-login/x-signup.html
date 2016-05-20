@@ -58,6 +58,24 @@
  			isCoach = this.isCoach, birthDate = this.birthDate, licenceNumber = this.licenceNumber,
  			speed = this.speed, height = this.height, weight = this.weight, availability = this.availability;
 
+ 			var user = app.$.auth.signInWithEmailAndPassword(email, pwd)
+ 			.catch(function(error) {
+				// Handle Errors here.
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				if (error) {
+					switch (error.code) {
+						case "EMAIL_TAKEN":
+							console.log("The new user account cannot be created because the email is already in use.");
+							break;
+						case "INVALID_EMAIL":
+							console.log("The specified email is not a valid email.");
+							break;
+						default:
+							console.log("Error creating user:", error);
+					}
+				}
+			});
 			ref.createUser({
 			  email: email,
 			  password: pwd

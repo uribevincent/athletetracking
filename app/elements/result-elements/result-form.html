@@ -82,7 +82,7 @@
 		observers: ['_hasUid(result)'],
 		_hasUid: function(r){
 			if(r === null) return;
-			this.isNew = !r.hasOwnProperty('__firebaseKey__') && this.editable;
+			this.isNew = !r.hasOwnProperty('$key') && this.editable;
 		},
 		addRace: function(){
 			var me = this;
@@ -111,8 +111,8 @@
 				logRef.child(newRes.key()).update(log);
 			}
 			else{
-				ref.child(me.result.__firebaseKey__).set(res);
-				logRef.child(me.result.__firebaseKey__).update(log);
+				ref.child(me.result.$key).set(res);
+				logRef.child(me.result.$key).update(log);
 			}
 			app.displayMessageToast('Résultat enregistré');
 

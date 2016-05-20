@@ -17,8 +17,11 @@
 
     <span class="page-title"></span>
     <form  is="iron-form" id="form" >
+
  <paper-input name="email" label="Email" value="{{email}}" required></paper-input>
  <paper-input name="password" label="Mot de passe"  value="{{password}}" type="password"></paper-input>
+
+
  <paper-button raised on-tap="signon">Connexion</paper-button>
     </form>
 </template>
@@ -41,26 +44,11 @@
         },
 
  		signon: function() {
- 			var ref = new Firebase(app.firebaseURL);
- 			var email = this.email;
- 			var pwd = this.password;
-			ref.authWithPassword({
-					email    : email,
-					password : pwd
-				}, function(error, authData) {
-					if(!error){
-						app.authData = authData;
-    					app.isLogged = true;
-						//redirect
-						app.route = "home";
-						app.displayMessageToast('Bienvenue ' + authData.uid);
-					}
-				}, {
-				  remember: "default"
-				});
-        }
-
-
+ 			app.$.auth.signInWithEmailAndPassword(this.email, this.password);
+			this.fire('logged-in');
+			this.email = null;
+			this.password = null;
+		}
       });
     })();
   </script>

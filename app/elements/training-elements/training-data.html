@@ -1,18 +1,15 @@
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/firebase-element/firebase-collection.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
 
 
 <dom-module id="training-data">
 	<template>
 
-	<firebase-collection
-		location="{{location}}"
-		data="{{fbTrainings}}"
-		on-firebase-value="_firebaseLoaded"
-		on-firebase-added="_firebaseLoaded">
-	</firebase-collection>
+	<firebase-query
+		path="{{location}}"
+		data="{{fbTrainings}}">
+	</firebase-query>
 		<!-- Backfill todos from localstorage. This prevents an initial flash while
 				 we're waiting to hear from Firebase, and it lets the user see their
 				 old todos if they start the app offline.
@@ -32,6 +29,10 @@
 					notify: true
 				},
 				athlete: Object,
+				fbTrainings: {
+					type: Object,
+					observer : '_firebaseLoaded'
+				},
 				date: {
 					notify: true
 				},
@@ -43,17 +44,17 @@
 			// Setup user ref in firebase if auth succeeds
 			_locationChanged: function(/*ath,*/ d) {
 				if (d) {
-					this.location = [app.firebaseURL, '/training-log/', app.authData.uid, d.substring(0,4), d.substring(5)].join('/');
+					this.location = ['/training-log', app.appUser.uid, d.substring(0,4), d.substring(5)].join('/');
 				}
 			},
-			_firebaseLoaded: function() {
-				if(this.location){
+			_firebaseLoaded: function(newData, oldData) {
+				//if(this.location){
 					this._firebaseConnected = true;
 					this.trainings = this.fbTrainings;
 					//this.backupTrainings = this.fbTrainings;
 					this.linkPaths('fbTrainings', 'trainings');
 					//this.linkPaths('backupTrainings', 'trainings');
-				}
+				//}
 			},
 			_backupLoaded: function() {
 				if (!this._firebaseConnected) {

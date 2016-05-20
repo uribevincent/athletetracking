@@ -267,7 +267,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					_.each(arr,function(training){
 						var dIndex = me.getDayIndex(training.dayNumber, diff);
 						if(dIndex > -1){
-							training.uid = training.__firebaseKey__;
+							training.uid = training.$key;
 							me.push("days.#" + dIndex + ".logs", training);
 						}
 					});
@@ -346,7 +346,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				var me = this;
 				var year = this.date.substring(0,4);
 				var month = this.date.substring(5);
-				/*var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
+				var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
 				if(me.currentEvent.uid !== undefined){
 					ref.child(me.currentEvent.uid).set({
 						type: me.currentEvent.type,
@@ -362,7 +362,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				}
 				else{
 					ref.push(me.currentEvent);
-				}*/
+				}
 				this.fire('add-training', {training : me.currentEvent});
 				app.displayMessageToast('Evènement enregistré');
 				this.selectedPage = 0;

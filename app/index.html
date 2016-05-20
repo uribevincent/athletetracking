@@ -70,15 +70,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endbuild -->
 
   <template is="dom-bind" id="app">
+	<firebase-app
+		auth-domain="athlete-tracking.firebaseapp.com"
+		database-url="https://athlete-tracking.firebaseio.com"
+		api-key="AIzaSyChcr8QiPPCCElm4JWmnPJ3cSRDanVdNxQ">
+	</firebase-app>
 
-	<firebase-auth
-	  auto-login
-	  redirect
-	  location="[[firebaseURL]]"
-	  provider="[[firebaseProvider]]"
-	  on-error="onFirebaseError"
-	  on-login="onFirebaseLogin"></firebase-auth>
-
+	<firebase-auth id="auth"
+	user="{{appUser}}"
+	on-error="onFirebaseError"></firebase-auth>
     <paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe  force-narrow>
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
@@ -148,8 +148,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 	</paper-tabs>
 	<iron-pages selected="{{selected}}">
+
             	<x-signup></x-signup>
-            	<x-signon></x-signon>
+            	<x-signon on-logged-in="fbLogin"></x-signon>
          </iron-pages>
          </paper-material>
             </section>

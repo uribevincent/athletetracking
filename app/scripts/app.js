@@ -15,8 +15,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	// Learn more about auto-binding templates at http://goo.gl/Dx1u2g
 	var app = document.querySelector('#app');
 	app.firebaseURL = 'https://athlete-tracking.firebaseio.com';
-	app.firebaseProvider = 'anonymous';
-	app.authData = null;
 	app.isLogged = false;
 	app.selected = 1;
 	// Sets app default base URL
@@ -97,12 +95,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		this.$.errorToast.text = event.detail.message;
 		this.$.errorToast.show();
 	};
-	app.onFirebaseLogin = function(event) {
+	app.fbLogin = function(event) {
 		// this.ref = new Firebase(this.firebaseURL + '/user/' + event.detail.user.uid);
 			//this.ref.on('value', function(snapshot) {
 			//Load needed data
 			//app.updateItems(snapshot);
+			console.log(app.appUser);
 			app.isLogged = true;
+			app.route = 'home';
 	//});
 	};
 })(document);
