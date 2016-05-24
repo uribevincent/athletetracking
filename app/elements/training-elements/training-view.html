@@ -23,6 +23,10 @@
     paper-icon-button {
       --paper-icon-button-ink-color: white;
     }*/
+    paper-toolbar {
+    	color: black;
+    	background-color: transparent;
+    }
     .spacer {
       @apply(--layout-flex);
     }
@@ -41,9 +45,9 @@
 					<paper-input  label="Date" value="{{date}}" type="month"></paper-input>
 				</div>
 				<iron-pages selected="{{selectedPage}}">
-					<training-calendar days="[[days]]" editable="{{editable}}" on-add-training="_showForm"></training-calendar>
+					<training-calendar days="[[days]]" editable="{{editable}}" on-add-training="_showForm" on-open-training="_openTraining"></training-calendar>
 					<training-book  days="[[days]]" on-select-training="_selectResult"  on-add-training="_showForm"></training-book>
-					<training-form selectedTraining="{{selectedItem}}" on-close="_goCalendar"></training-form>
+					<training-form item="{{selectedItem}}" on-close="_goCalendar" on-save="_saveEvent"></training-form>
 				</iron-pages>
 			</div>
 		</paper-header-panel>
@@ -69,14 +73,29 @@
 					date: {
 						type: String,
 						notify: true,
-						observer: '_renderCalendar'
+						observer: '_renderCalendar',
+						value: function(){
+									var d = new Date();
+									return [d.getFullYear(), ("0" + (d.getMonth() + 1)).slice(-2)].join('-');
+								}
+					},
+					selectedItem:{
+						type: Object,
+						notify: true
 					},
 					diff: 0
 				},
-
 				observers: [ "_updateCalendar(trainings.splices)"],
-
 				_showForm: function(e){
+					this.selectedItem = {
+						dayNumber: e.detail.dayNumber,
+						time: '0:0:0'
+					};
+					this.selectedPage = 2;
+				},
+
+				_openTraining: function(e){
+					this.selectedItem = e.detail.training;
 					this.selectedPage = 2;
 				},
 				_goBook: function(){
@@ -143,6 +162,32 @@
 							}
 						}, this);
 					}
+				},
+				_saveEvent: function(e){
+					var me = this;
+					var year = this.date.substring(0,4);
+					var month = this.date.substring(5);
+					var ref = firebase.database().ref(['/training-log/', app.appUser.uid, year, month].join('/'));
+					var item = {
+							type: me.selectedItem.type  || null,
+							comment: me.selectedItem.comment || null,
+							dayNumber: me.selectedItem.dayNumber,
+							distance: me.selectedItem.distance || null,
+							heartFrequency: me.selectedItem.heartFrequency  || null,
+							rpe: me.selectedItem.rpe  || null,
+							session_real: me.selectedItem.session_real  || null,
+							session_scheduled: me.selectedItem.session_scheduled  || null,
+							time: me.selectedItem.time || null
+						};
+					if(me.selectedItem.uid !== undefined){
+						ref.child(me.selectedItem.uid).set(item);
+					}
+					else{
+						item.dayNumber = e.detail.data.dayNumber;
+						ref.push(item);
+					}
+					app.displayMessageToast('Evènement enregistré');
+					this.selectedPage = 0;
 				}
 			});
 		})();

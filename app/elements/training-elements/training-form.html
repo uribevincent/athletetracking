@@ -33,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		<h2>Nouvel évènement</h2>
 			<form is="iron-form">
 				<paper-dropdown-menu flex	label="Type">
-					<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{currentEvent.type}}">
+					<paper-listbox class="dropdown-content" attr-for-selected="value"	selected="{{item.type}}">
 						<paper-item value="running">Course à pied</paper-item>
 						<paper-item value="cycling">Cyclisme</paper-item>
 						<paper-item value="swimming">Natation</paper-item>
@@ -42,17 +42,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					</paper-listbox>
 				</paper-dropdown-menu>
 
-				<paper-textarea  label="Séance prévue" value="{{currentEvent.session_scheduled}}"></paper-textarea>
-				<paper-textarea  label="Séance réalisée" value="{{currentEvent.session_real}}"></paper-textarea>
-				<paper-input  label="Distance totale" value="{{currentEvent.distance}}" pattern="[0-9]*"></paper-input>
-				<paper-input  label="Temps total" value="{{currentEvent.time}}" type="time" step="1" ></paper-input>
-				Fréquence cardiaque moyenne <paper-slider pin value="{{currentEvent.distance.heartFrequency}}" max="220"></paper-slider>
-				RPE <paper-slider pin snaps max="10" max-markers="10" step="1" value="{{currentEvent.rpe}}"></paper-slider>
-				<paper-textarea  label="Commentaire" value="{{currentEvent.comment}}"></paper-textarea>
+				<paper-textarea  label="Séance prévue" value="{{item.session_scheduled}}"></paper-textarea>
+				<paper-textarea  label="Séance réalisée" value="{{item.session_real}}"></paper-textarea>
+				<paper-input  label="Distance totale" value="{{item.distance}}" pattern="[0-9]*"></paper-input>
+				<paper-input  label="Temps total" value="{{item.time}}" type="time" step="1" ></paper-input>
+				Fréquence cardiaque moyenne <paper-slider pin value="{{item.distance.heartFrequency}}" max="220"></paper-slider>
+				RPE <paper-slider pin snaps max="10" max-markers="10" step="1" value="{{item.rpe}}"></paper-slider>
+				<paper-textarea  label="Commentaire" value="{{item.comment}}"></paper-textarea>
 
 				<div class="buttons">
-				   	<paper-button raised on-tap="saveEvent">Enregistrer</paper-button>
-			   		<paper-button on-tap="cancelEvent">Annuler</paper-button>
+				   	<paper-button raised on-tap="_saveEvent">Enregistrer</paper-button>
+			   		<paper-button on-tap="_cancelEvent">Annuler</paper-button>
 				</div>
 			</form>
 	</div>
@@ -66,38 +66,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			is: 'training-form',
 
 			properties: {
-				currentEvent: Object
+				item: Object
 			},
-			saveEvent: function(e){
-				var me = this;
-				var year = this.date.substring(0,4);
-				var month = this.date.substring(5);
-				//var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
-
-
-				var ref = firebase.database().ref(['/training-log/', app.appUser.uid, year, month].join('/'));
-				if(me.currentEvent.uid !== undefined){
-					ref.child(me.currentEvent.uid).set({
-						type: me.currentEvent.type,
-						comment: me.currentEvent.comment,
-						dayNumber: me.currentEvent.dayNumber,
-						distance: me.currentEvent.distance,
-						heartFrequency: me.currentEvent.heartFrequency,
-						rpe: me.currentEvent.rpe,
-						session_real: me.currentEvent.session_real,
-						session_scheduled: me.currentEvent.session_scheduled,
-						time: me.currentEvent.time
-					});
-				}
-				else{
-					ref.push(me.currentEvent);
-				}
-				//this.push('trainings',this.currentEvent);
-				//this.fire('add-training', {training : this.currentEvent});
-				app.displayMessageToast('Evènement enregistré');
-				this.fire('close', {});
+			_saveEvent: function(e){
+					this.fire('save', {data: this.item});
 			},
-			cancelEvent: function(){
+			_cancelEvent: function(){
 				this.fire('close', {});
 			}
 		});

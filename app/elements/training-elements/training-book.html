@@ -8,20 +8,26 @@
 			display: block;
 		}
 
+		tab_w_content{
+			color: blue;
+		}
+
 
 	</style>
 
 	<iron-pages selected="{{selectedPage}}">
 	<div>
+	<template is="dom-if" if="[[days.length]]" >
 		<paper-tabs selected="{{selectedTraining}}" attr-for-selected="training">
 			<template is="dom-repeat" items="[[days]]" as="d" >
-				<paper-tab hidden$="{{!d}}" training="{{d}}" >[[d.dayNumber]]</paper-tab>
+				<paper-tab hidden$="{{!d}}" training="{{d}}" class="{{_hasContent(d.logs)}}">[[d.dayNumber]]</paper-tab>
 			</template>
 		</paper-tabs>
 		<template is="dom-repeat" items="[[selectedTraining.logs]]" as="t" >
 			<training-book-page training="{{t}}"></training-book-page>
 		</template>
 		<paper-button on-tap="_newTraining">Nouvelle entrée</paper-button>
+	</template>
 	</div>
 
 </template>
@@ -44,6 +50,13 @@
 					//observer: '_renderCalendar'
 				},
 				diff: 0
+			},
+			_hasContent: function(arr){
+				if(arr){
+					if(arr.length > 0)
+						return 'tab_w_content';
+				}
+				return '';
 			},
 			_newTraining: function(e){
 				this.fire('add-training', {training: this.selectedTraining});

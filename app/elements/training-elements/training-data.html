@@ -32,16 +32,16 @@
 					type: Object,
 					observer: '_firebaseLoaded'
 				},
-				date: {
-					observer: '_dateChanged'
-				},
+				user: Boolean,
+				date: String,
 				_firebaseConnected: {
 					value: false
 				}
 			},
+			observers: ['_dateChanged(date,user)'],
 			// Setup user ref in firebase if auth succeeds
-			_dateChanged: function(d) {
-				if (d !== "" && app.appUser !== null) {
+			_dateChanged: function(d, u) {
+				if (d !== "" && u && app.appUser !== null) {
 					this.location = ['/training-log', app.appUser.uid, d.substring(0,4), d.substring(5)].join('/');
 				}
 			},

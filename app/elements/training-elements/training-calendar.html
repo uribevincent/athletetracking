@@ -44,12 +44,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			font-size: 0.8rem;
 		}
 
-		.flex paper-card{
+		.flex paper-menu-button{
 			width: 14%;
 			min-height: 100px;
 			margin-right:4px;
 			margin-bottom:4px;
 			min-width: 100px;
+			padding: 0px;
+		}
+
+		paper-card, paper-button{
+			width: 100%;
 		}
 
 		.flex .empty{
@@ -60,16 +65,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		}
 
 		.race{
-			color: red;
+			color: #b53f51;
 
 		}
 
-		.newEvent{
-			color: blue;
-
-		}
 		.training{
-			color: green;
+			color: #8cb53f;
+		}
+		.swimming{
+			color: #3f51b5;
+		}
+		.tennis{
+			color: #b5683f;
+		}
+		.cycling{
+			color: #b5a33f;
 		}
 
 		.event{
@@ -98,6 +108,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		.card-header { @apply(--paper-font-headline); }
 		.card-name { color: var(--paper-grey-600); margin: 10px 0; }
 
+			paper-menu-button {
+			min-width: 0px;
+		}
 		paper-button {
 			min-width: 0px;
 		}
@@ -111,31 +124,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					<div class="empty"></div>
 				</template>
 				<template is="dom-if" if="{{day}}">
-					<div class="card-actions horizontal justified">
+
 						<paper-menu-button vertical-align="bottom">
 
-							<paper-button class="dropdown-trigger" class="dropdown-trigger" raised>
-							<paper-card class="day" data-arg="{{day}}" >
+							<paper-button class="dropdown-trigger" >
+							<paper-card class="day"  >
 								<div class="card-title">
 									{{day.dayNumber}}
 								</div>
 				 				<div class="day-content">
 									<div class="card-content">
-									s
+
+									</div>
+									<div class="card-actions horizontal justified">
+										<template is="dom-repeat" items="[[day.logs]]">
+											<span>
+												<i class$="fa fa-circle {{item.type}}" aria-hidden="true"></i>
+												<paper-tooltip>{{item.type}}</paper-tooltip>
+											</span>
+										</template>
 									</div>
 								</div>
 
-          					</paper-button>
           					</paper-card>
+          					</paper-button>
 							 <paper-menu class="dropdown-content">
 								<template is="dom-repeat" items="[[day.logs]]">
 									<!--<paper-button class$="{{item.type}}" data-log="{{item}}" on-tap="openDialog">
 										<i class="fa fa-heartbeat" aria-hidden="true"></i>
 										<paper-tooltip>Editer</paper-tooltip>
 									</paper-button>-->
-									<paper-item>{{item.type}}</paper-item>
+									<paper-item on-tap="_openLog" data-arg="{{item}}">{{item.type}}</paper-item>
 								</template>
-								<paper-item>New</paper-item>
+								<hr>
+								<paper-item on-tap="_addLog" data-arg="{{day}}">Nouveau...</paper-item>
 							</paper-menu>
 						</paper-menu-button>
 
@@ -144,7 +166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 										<paper-tooltip>Nouvel évènement</paper-tooltip>
 							</paper-button>-->
 
-				</div>
+
 				</template>
 			</template>
 
@@ -172,63 +194,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				}
 			},
 
-
-			openDialog: function(e){
-				if(e.currentTarget.className.startsWith('newEvent')){
-					this.currentEvent = {dayNumber: e.currentTarget.dataArg.dayNumber};
-				}
-				else{
-					this.currentEvent = e.currentTarget.dataLog;
-				}
-				/*this.selectedPage = 1;*/
-				this.fire('add-training', {training: this.currentEvent});
+			_openLog: function(e){
+				this.fire('open-training', {training: e.currentTarget.dataArg});
 			},
-			/*
-			findLog: function(logId){
-				var lIndex = -1;
-				var dIndex = _.findIndex(this.days,
-					function(d){
-						if(d === null){ return false; }
-						lIndex = _.findIndex(d.logs,
-							function(l){
-								return l.uid == logId;
-							});
-					return lIndex > -1;
-				});
-				return {day: dIndex, log: lIndex};
-			},*/
-
-			saveEvent: function(e){
-				var me = this;
-				var year = this.date.substring(0,4);
-				var month = this.date.substring(5);
-				//var ref = new Firebase(app.firebaseURL + '/training-log/' + app.authData.uid + '/' + year + '/' + month);
-
-
-				var ref = firebase.database().ref(['/training-log/', app.appUser.uid, year, month].join('/'));
-				if(me.currentEvent.uid !== undefined){
-					ref.child(me.currentEvent.uid).set({
-						type: me.currentEvent.type,
-						comment: me.currentEvent.comment,
-						dayNumber: me.currentEvent.dayNumber,
-						distance: me.currentEvent.distance,
-						heartFrequency: me.currentEvent.heartFrequency,
-						rpe: me.currentEvent.rpe,
-						session_real: me.currentEvent.session_real,
-						session_scheduled: me.currentEvent.session_scheduled,
-						time: me.currentEvent.time
-					});
-				}
-				else{
-					ref.push(me.currentEvent);
-				}
-				//this.push('trainings',this.currentEvent);
-				//this.fire('add-training', {training : this.currentEvent});
-				app.displayMessageToast('Evènement enregistré');
-				this.selectedPage = 0;
-			},
-			cancelEvent: function(){
-				this.selectedPage = 0;
+			_addLog: function(e){
+				this.fire('add-training', {dayNumber: e.currentTarget.dataArg.dayNumber});
 			}
 		});
 	})();
