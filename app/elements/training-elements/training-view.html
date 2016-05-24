@@ -41,8 +41,9 @@
 					<paper-input  label="Date" value="{{date}}" type="month"></paper-input>
 				</div>
 				<iron-pages selected="{{selectedPage}}">
-					<training-calendar trainings="[[trainings]]" date="{{date}}" editable="{{editable}}" on-add-training="_test"></training-calendar>
-					<training-book trainings="[[trainings]]"  on-select-training="_selectResult"></training-book>
+					<training-calendar days="[[days]]" editable="{{editable}}" on-add-training="_showForm"></training-calendar>
+					<training-book  days="[[days]]" on-select-training="_selectResult"  on-add-training="_showForm"></training-book>
+					<training-form selectedTraining="{{selectedItem}}" on-close="_goCalendar"></training-form>
 				</iron-pages>
 			</div>
 		</paper-header-panel>
@@ -67,17 +68,81 @@
 			 		},
 					date: {
 						type: String,
-						notify: true
-					}
+						notify: true,
+						observer: '_renderCalendar'
+					},
+					diff: 0
 				},
-				_test: function(e){
-					this.push('trainings', e.detail.training);
+
+				observers: [ "_updateCalendar(trainings.splices)"],
+
+				_showForm: function(e){
+					this.selectedPage = 2;
 				},
 				_goBook: function(){
 					this.selectedPage = 1;
 				},
 				_goCalendar: function(){
 					this.selectedPage = 0;
+				},
+				getDaysToMonday: function(d) {
+					var dayOfWeek = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+					if(dayOfWeek == 0){
+						return 6;
+					}
+					else{
+						return dayOfWeek - 1;
+					}
+				},
+				_renderCalendar: function(d){
+					this.days = new Array();
+					if(d){
+						var year = d.substring(0,4);
+						var month = d.substring(5);
+						var date = new Date(year, month, 0);
+						var limit = parseInt(date.getDate());
+						this.diff = this.getDaysToMonday(date);
+						//add empty days
+						for(var j = 0; j < this.diff; j++){
+							this.push('days',null);
+						}
+						//Generate month calendar
+						for(var i = 0; i < limit; i++){
+							var o = {
+								fullDate: new Date(year, month, i + 1),
+								dayNumber: i + 1,
+								logs: []
+							};
+							this.push('days',o);
+						}
+					}
+				},
+				getDayIndex: function(dayNumber, diff){
+					var index = _.findIndex(this.days, function(d){
+						if(d === null){ return false; }
+						return d.dayNumber == dayNumber;
+					});
+					return index - (diff == 0 ? 0 : diff - 1);
+				},
+				_updateCalendar: function(changeRecord){
+					if (changeRecord) {
+						var me = this;
+						_.each(changeRecord.indexSplices, function(s){
+							s.removed.forEach(function(log) {
+								//console.log(log.$key + ' was removed');
+							});
+							for (var i=0; i<s.addedCount; i++) {
+								var index = s.index + i;
+								var log = s.object[index];
+								//console.log('log ' + log.$key + ' added at index ' + index);
+								var dIndex = me.getDayIndex(log.dayNumber, this.diff);
+								if(dIndex > -1){
+									log.uid = log.$key;
+									me.push("days.#" + dIndex + ".logs", log);
+								}
+							}
+						}, this);
+					}
 				}
 			});
 		})();

@@ -8,7 +8,7 @@
 		<h1 class="page-title" tabindex="-1"><paper-button on-tap="_goList">Athletes</paper-button></h1>
 		<iron-pages selected="{{selectedPage}}">
 			<athlete-list athletes="{{athletes}}" on-select-athlete="_selectAthlete"></athlete-list>
-			<athlete-file  athlete="{{selectedAthlete}}"></athlete-file>
+			<athlete-file  athlete="{{selectedAthlete}}" on-save="_saveAthlete"></athlete-file>
 		</iron-pages>
 	</template>
 
@@ -30,6 +30,20 @@
 				_selectAthlete: function(e){
 					this.selectedPage = 1;
 					this.selectedAthlete = e.detail.athlete;
+				},
+				_saveAthlete: function(e){
+					var ath = e.detail.athlete;
+					var ref = firebase.database().ref(['/athletes/', ath.$key].join('/'));
+					ref.set({
+						availability: ath.availability,
+						birthDate: ath.birthDate,
+						height: ath.height,
+						licenceNumber: ath.licenceNumber,
+						name: ath.name,
+						vma: ath.vma,
+						weight: ath.weight
+					});
+					app.displayMessageToast('Informations enregistrées');
 				}
 			});
 		})();

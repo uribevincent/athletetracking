@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="training-book-page">
+<template>
+	<style include="shared-styles" is="custom-style">
+		:host {
+			display: block;
+		}
+
+
+	</style>
+			<h5>{{training.type}}</h5>
+			<p><i>Séance prévue : {{training.session_scheduled}}</i></p>
+			<p>Séance réalisée : {{training.session_real}}</p>
+			<p>Distance parcourue : {{training.distance}}</p>
+			<p>Fréquence cardiaque moyenne : {{training.heartFrequency}}</p>
+			<p>RPE : {{training.rpe}}</p>
+			<p>Temps total : {{training.time}}</p>
+
+			<p>{{training.comment}}</p>
+</template>
+
+<script>
+	(function() {
+		'use strict';
+
+		Polymer({
+			is: 'training-book-page',
+
+			properties: {
+				training: {
+					notify: true
+				}
+
+			},
+
+			saveEvent: function(e){
+
+			},
+			cancelEvent: function(){
+				this.selectedPage = 0;
+			}
+		});
+	})();
+</script>
+</dom-module>

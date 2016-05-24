@@ -34,18 +34,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 		<div>
 
-					<template is="dom-if" if="{{editEnabled}}">
-
-								<paper-input label="Licence FFA" value="{{athlete.licenceNumber}}"></paper-input>
-								<paper-input label="Date de naissance" value="{{athlete.birthDate}}"></paper-input>
-											<paper-input label="Taille" value="{{athlete.height}}"></paper-input>
-								<paper-input label="Poids" value="{{athlete.weight}}"></paper-input>
-
-								<paper-input label="VMA Estimée" value="{{athlete.vma}}"></paper-input>
-
-								<paper-input label="Disponibilités" value="{{athlete.availability}}"></paper-input>
-
-					</template>
+			<template is="dom-if" if="{{editEnabled}}">
+				<paper-input label="Licence FFA" value="{{athlete.licenceNumber}}"></paper-input>
+				<paper-input label="Date de naissance" value="{{athlete.birthDate}}"></paper-input>
+				<paper-input label="Taille" value="{{athlete.height}}"></paper-input>
+				<paper-input label="Poids" value="{{athlete.weight}}"></paper-input>
+				<paper-input label="VMA Estimée" value="{{athlete.vma}}"></paper-input>
+				<paper-input label="Disponibilités" value="{{athlete.availability}}"></paper-input>
+				<paper-button on-tap="_saveAthlete">Enregistrer</paper-input>
+			</template>
 					<template is="dom-if" if="{{!editEnabled}}">
 						<tr>
 							<td>Licence</td><td>{{athlete.licenceNumber}}</td>
@@ -98,6 +95,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				value: false,
 				computed: '_isEditable(athlete)'
 			},
+		},
+		_saveAthlete: function(){
+			this.fire('save', {athlete: this.athlete});
 		},
 		_isEditable: function(a){
 			return a.$key === app.appUser.uid;

@@ -13,23 +13,15 @@
 
 	<iron-pages selected="{{selectedPage}}">
 	<div>
-		<div class="container flex">
-			<template is="dom-repeat" items="[[trainings]]" as="t" >
-				<paper-material elevation="1">
-					<h4>{{date}}-{{t.dayNumber}}</h4>
-					<h5>{{t.type}}</h5>
-					<p><i>Séance prévue : {{t.session_scheduled}}</i></p>
-					<p>Séance réalisée : {{t.session_real}}</p>
-					<p>Distance parcourue : {{t.distance}}</p>
-					<p>Fréquence cardiaque moyenne : {{t.heartFrequency}}</p>
-					<p>RPE : {{t.rpe}}</p>
-					<p>Temps total : {{t.time}}</p>
-
-					<p>{{t.comment}}</p>
-				</paper-material>
+		<paper-tabs selected="{{selectedTraining}}" attr-for-selected="training">
+			<template is="dom-repeat" items="[[days]]" as="d" >
+				<paper-tab hidden$="{{!d}}" training="{{d}}" >[[d.dayNumber]]</paper-tab>
 			</template>
-
-		</div>
+		</paper-tabs>
+		<template is="dom-repeat" items="[[selectedTraining.logs]]" as="t" >
+			<training-book-page training="{{t}}"></training-book-page>
+		</template>
+		<paper-button on-tap="_newTraining">Nouvelle entrée</paper-button>
 	</div>
 
 </template>
@@ -46,74 +38,15 @@
 					type: Number,
 					value: 0,
 				},
-				trainings: {
+				days: {
 					type: Array,
 					notify: true
 					//observer: '_renderCalendar'
 				},
-				date: {
-					notify: true,
-					observer: '_renderCalendar'
-				},
-				days: [],
 				diff: 0
 			},
-
-			//observers: [ "computeCalendar(month)"],
-
-
-			observers: [ "_updateCalendar(trainings.splices)"],
-
-
-			_updateCalendar: function(changeRecord){
-				if (changeRecord) {
-					var me = this;
-					_.each(changeRecord.indexSplices, function(s){
-						s.removed.forEach(function(log) {
-							console.log(log.$key + ' was removed');
-						});
-						for (var i=0; i<s.addedCount; i++) {
-							var index = s.index + i;
-							var log = s.object[index];
-							console.log('log ' + log.$key + ' added at index ' + index);
-							/*var dIndex = me.getDayIndex(log.dayNumber, this.diff);
-							if(dIndex > -1){
-								log.uid = log.$key;
-								me.push("days.#" + dIndex + ".logs", log);
-							}*/
-						}
-					}, this);
-				}
-			},
-			_renderCalendar: function(d){
-
-				/*this.days = new Array();
-				if(d){
-					var year = d.substring(0,4);
-					var month = d.substring(5);
-					var date = new Date(year, month, 0);
-					var limit = parseInt(date.getDate());
-					this.diff = this.getDaysToMonday(date);
-					//add empty days
-					for(var j = 0; j < this.diff; j++){
-						this.push('days',null);
-					}
-					//Generate month calendar
-					for(var i = 0; i < limit; i++){
-						var o = {
-							fullDate: new Date(year, month, i + 1),
-							dayNumber: i + 1,
-							logs: []
-						};
-						this.push('days',o);
-					}
-				}*/
-			},
-			saveEvent: function(e){
-
-			},
-			cancelEvent: function(){
-				this.selectedPage = 0;
+			_newTraining: function(e){
+				this.fire('add-training', {training: this.selectedTraining});
 			}
 		});
 	})();
