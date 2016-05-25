@@ -3,9 +3,18 @@
 <link rel="import" href="athlete-list.html">
 
 <dom-module id="athlete-view">
-	<template>
+<style is="custom-style">
 
-		<h1 class="page-title" tabindex="-1"><paper-button on-tap="_goList">Athletes</paper-button></h1>
+  paper-toolbar {
+		color: black;
+		background-color: transparent;
+	}
+</style>
+	<template>
+		<paper-toolbar>
+			<paper-icon-button icon="arrow-back" on-tap="_goList" hidden$="{{!selectedPage}}"></paper-icon-button>
+				<div class="title spacer">Athlètes</div>
+		</paper-toolbar>
 		<iron-pages selected="{{selectedPage}}">
 			<athlete-list athletes="{{athletes}}" on-select-athlete="_selectAthlete"></athlete-list>
 			<athlete-file  athlete="{{selectedAthlete}}" on-save="_saveAthlete"></athlete-file>

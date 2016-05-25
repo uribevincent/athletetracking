@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
+
+<dom-module id="dashboard-view">
+
+
+	<template>
+	<style is="custom-style">
+		:host {
+			display: block;
+		}
+
+		span,
+		input {
+			@apply(--paper-font-body2);
+		}
+		@media (max-width: 600px) {
+			.flex {
+				@apply(--layout-horizontal);
+				@apply(--layout-wrap);
+			}
+		}
+
+		.flex news-widget{
+			width: 25%;
+			margin-right:4px;
+			margin-bottom:4px;
+		}
+	</style>
+		<div class="container flex">
+		<news-widget></news-widget>
+
+		<news-widget></news-widget>
+
+		<news-widget></news-widget>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'dashboard-view',
+			properties: {
+				prop: {
+					notify: true
+				}
+			},
+			_func: function() {
+
+			}
+		});
+	</script>
+</dom-module>

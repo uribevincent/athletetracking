@@ -23,19 +23,20 @@
     paper-icon-button {
       --paper-icon-button-ink-color: white;
     }*/
-    .spacer {
+    /*.spacer {
       @apply(--layout-flex);
-    }
+    }*/
 
 
-    paper-toolbar {
-    	color: black;
-    	background-color: transparent;
-    }
+  paper-toolbar {
+		color: black;
+		background-color: transparent;
+	}
+
 	</style>
 	<template>
 		<paper-header-panel fixed>
-			<paper-toolbar>
+			<paper-toolbar class="transparent">
 				<paper-icon-button icon="arrow-back" on-tap="_goList" hidden$="{{!selectedPage}}"></paper-icon-button>
 				<div class="spacer title">Résultats</div>
 				<paper-icon-button icon="add" on-tap="_newResult" hidden$="{{!editable}}"></paper-icon-button>

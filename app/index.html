@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<firebase-auth id="auth"
 	user="{{appUser}}"
 	on-error="onFirebaseError"></firebase-auth>
-    <paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe  force-narrow>
+    <paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe force-narrow>
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
@@ -92,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
           <a data-route="home" href="{{baseUrl}}">
             <iron-icon icon="home"></iron-icon>
-            <span>Home</span>
+            <span>Accueil</span>
           </a>
 
           <a data-route="athletes" href="{{baseUrl}}athletes">
@@ -106,6 +106,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </a>
 
 
+          <a data-route="training-log" href="{{baseUrl}}training-log">
+            <iron-icon icon="book"></iron-icon>
+            <span>Profil</span>
+          </a>
 
 
 
@@ -115,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Main Area -->
       <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
         <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="tall">
+        <paper-toolbar id="mainToolbar" class="small">
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
 
           <span class="space"></span>
@@ -129,10 +133,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div class="app-name">Athlete Tracking</div>
           </div>
 
-          <!-- Application sub title -->
+          <!-- Application sub title
           <div class="bottom bottom-container">
             <div class="bottom-title">The future of coaching</div>
-          </div>
+          </div>-->
         </paper-toolbar>
 
         <!-- Main Content -->
@@ -156,38 +160,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </section>
 
             <section data-route="home" tabindex="-1">
-              <paper-material elevation="1">
-                <my-greeting></my-greeting>
-
-                <p class="subhead">You now have:</p>
-                <my-list></my-list>
-
-                <p>Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-              </paper-material>
+              <dashboard-view></dashboard-view>
 
             </section>
 
             <section data-route="athletes" tabindex="-1">
-              <paper-material elevation="1" >
+				<paper-material elevation="1" >
 					<athlete-data athletes="{{athletes}}" user="{{isLogged}}"></athlete-data>
 	             	<athlete-view athletes="{{athletes}}" ></athlete-view>
-              </paper-material>
+				</paper-material>
             </section>
 
             <section data-route="training-log" tabindex="-1">
-              <paper-material elevation="1">
-                <!--<h1 class="page-title" tabindex="-1">Carnet d'entraînement</h1>-->
-
-                <training-data trainings="{{tr}}"  user="{{isLogged}}" date="{{lDate}}"></training-data>
-                <training-view trainings="{{tr}}" date="{{lDate}}"></training-view>
-              </paper-material>
+				<paper-material elevation="1" >
+					<training-data trainings="{{tr}}"  user="{{isLogged}}" date="{{lDate}}"></training-data>
+					<training-view trainings="{{tr}}" date="{{lDate}}"></training-view>
+				</paper-material>
             </section>
 
-            <section data-route="books">
-			  <paper-material elevation="1">
-			    <p>Hello, World!</p>
-			  </paper-material>
-			</section>
+
           </iron-pages>
         </div>
       </paper-scroll-header-panel>

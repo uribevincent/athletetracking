@@ -10,6 +10,7 @@
 
 		tab_w_content{
 			color: blue;
+			background-color: red;
 		}
 
 
@@ -18,9 +19,13 @@
 	<iron-pages selected="{{selectedPage}}">
 	<div>
 	<template is="dom-if" if="[[days.length]]" >
-		<paper-tabs selected="{{selectedTraining}}" attr-for-selected="training">
+		<paper-tabs selected="{{selectedTraining}}" attr-for-selected="training" scrollable>
 			<template is="dom-repeat" items="[[days]]" as="d" >
-				<paper-tab hidden$="{{!d}}" training="{{d}}" class="{{_hasContent(d.logs)}}">[[d.dayNumber]]</paper-tab>
+
+				<paper-tab
+					hidden$="{{!d}}"
+					training="{{d}}"
+					class$="{{_hasContent(d.logs)}}">[[d.dayNumber]]</paper-tab>
 			</template>
 		</paper-tabs>
 		<template is="dom-repeat" items="[[selectedTraining.logs]]" as="t" >
