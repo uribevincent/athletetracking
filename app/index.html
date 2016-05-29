@@ -71,12 +71,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 	<firebase-app
+    name="athTrain"
 		auth-domain="athlete-tracking.firebaseapp.com"
 		database-url="https://athlete-tracking.firebaseio.com"
 		api-key="AIzaSyChcr8QiPPCCElm4JWmnPJ3cSRDanVdNxQ">
 	</firebase-app>
 
 	<firebase-auth id="auth"
+  app-name="athTrain"
 	user="{{appUser}}"
 	on-error="onFirebaseError"></firebase-auth>
     <paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe force-narrow>

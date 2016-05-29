@@ -5,9 +5,10 @@
 
 <dom-module id="result-data">
 	<template>
-
+ 
 	<firebase-query
-		path="[[location]]"
+  		app-name="athTrain"
+		path="[[resLocation]]"
 		data="{{fbResults}}">
 	</firebase-query>
 		<!-- Backfill todos from localstorage. This prevents an initial flash while
@@ -30,22 +31,35 @@
 				},
 				fbResults: {
 					type: Object,
-					observer: '_firebaseLoaded'
+					notify: true
 				},
 				athlete: {
-					observer: '_athleteChanged'
+					type: Object,
+					notify: true
+				},
+				resLocation: {
+					type:String,
+					notify: true,
+					computed: '_test(athlete)'
 				},
 				_firebaseConnected: {
 					value: false
 				}
 			},
+			observers: ['_athleteChanged(athlete)', '_firebaseLoaded(fbResults)'],
 			// Setup user ref in firebase if auth succeeds
 			_athleteChanged: function(ath) {
-				if (ath) {
+				/*if (ath) {
 					this.location = ['/results', ath.$key].join('/');
-				}
+				}*/
 			},
-			_firebaseLoaded: function(newData, oldData) {
+			_test: function(ath){
+				//if (ath) {
+					this.resLocation = ['/results', ath.$key].join('/');
+					console.log(this.resLocation);
+				//}
+			},
+			_firebaseLoaded: function(newData) {
 				if(this.location){
 					this._firebaseConnected = true;
 					this.results = this.fbResults;
