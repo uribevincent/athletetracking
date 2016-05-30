@@ -77,6 +77,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       setFocus(app.route);
     });
 
+    page('/vma-table', function() {
+    	autoRedirect('vma-table');
+      setFocus(app.route);
+    });
+
 
     // 404
     page('*', function() {

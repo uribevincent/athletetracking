@@ -1,0 +1,82 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
+
+<dom-module id="vma-table">
+	<template>
+		<table>
+			<tr>
+				<td>% VMA</td>
+				<td>100m</td>
+				<td>200m</td>
+				<td>300m</td>
+				<td>400m</td>
+				<td>600m</td>
+				<td>800m</td>
+				<td>1000m</td>
+				<td>1500m</td>
+				<td>2000m</td>
+				<td>3000m</td>
+				<td>5000m</td>
+				<td>10km</td>
+				<td>Semi</td>
+				<td>Marathon</td>
+			</tr>
+			<template is="dom-repeat" items="[[table]]">
+				<tr>
+					<td>[[item.percent]]</td>
+					<td>[[item.100.pace]]</td>
+					<td>[[item.200.pace]]</td>
+					<td>[[item.300.pace]]</td>
+					<td>[[item.400.pace]]</td>
+					<td>[[item.600.pace]]</td>
+					<td>[[item.800.pace]]</td>
+					<td>[[item.1000.pace]]</td>
+					<td>[[item.1500.pace]]</td>
+					<td>[[item.2000.pace]]</td>
+					<td>[[item.3000.pace]]</td>
+					<td>[[item.5000.pace]]</td>
+					<td>[[item.10000.pace]]</td>
+					<td>[[item.21100.pace]]</td>
+					<td>[[item.42195.pace]]</td>
+				</tr>
+			</template>
+		</table>
+	</template>
+	<script>
+		Polymer({
+			is: 'vma-table',
+			properties: {
+				vma: {
+					notify: true,
+					value: 10
+				}
+			},
+			observers: ['_computeTable(vma)'],
+			_computeTable: function(speed) {
+				this.table = [];
+				var fractions = [100,200,300,400,600,800,1000,1500,2000,3000,5000,10000,21100,42195];
+				for(var i = 110; i >= 50; i -= 5){
+					var actualSpeed = speed / 100 * i;
+
+					var speedKm = 1 / actualSpeed;
+					var val = {speed: actualSpeed};
+					for (var f = 0; f < fractions.length; f++) {
+						var d = new Date();
+
+						var m = (60 / actualSpeed) * (fractions[f]/1000);
+						var hours = parseInt(m / 60);
+						var minutes = parseInt(((m / 60) - hours )* 60);
+						var seconds = parseInt((m - (hours * 60 + minutes)) * 60);
+						hours = isNaN(hours) ? '-' : ('0' + hours).slice(-2);
+						minutes = isNaN(minutes) ? '-' : ('0' + minutes).slice(-2);
+						seconds = isNaN(seconds) ? '-' : ('0' + seconds).slice(-2);
+						val[fractions[f].toString().replace('.','_')] = {pace: [hours, minutes, seconds].join(':')};//d.toLocaleTimeString()};
+						val.percent = i;
+					}
+					this.push('table', val);
+				}
+			}
+		});
+	</script>
+</dom-module>

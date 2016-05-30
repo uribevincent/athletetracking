@@ -1,0 +1,18 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
+
+<dom-module id="vma-view">
+	<template>
+		<paper-input value="{{vma}}" label="VMA"></paper-input>
+		<vma-table vma="{{vma}}"></vma-table>
+	</template>
+	<script>
+		Polymer({
+			is: 'vma-view',
+			properties: {
+			}
+
+		});
+	</script>
+</dom-module>

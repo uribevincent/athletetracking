@@ -99,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <a data-route="athletes" href="{{baseUrl}}athletes">
             <iron-icon icon="info"></iron-icon>
-            <span>Athletes</span>
+            <span>Athlètes</span>
           </a>
 
           <a data-route="training-log" href="{{baseUrl}}training-log">
@@ -108,8 +108,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </a>
 
 
+          <a data-route="vma-table" href="{{baseUrl}}vma-table">
+            <iron-icon icon="speed"></iron-icon>
+            <span>Table VMA</span>
+          </a>
+
+
           <a data-route="training-log" href="{{baseUrl}}training-log">
-            <iron-icon icon="book"></iron-icon>
+            <iron-icon icon="contact"></iron-icon>
             <span>Profil</span>
           </a>
 
@@ -177,6 +183,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				<paper-material elevation="1" >
 					<training-data trainings="{{tr}}"  user="{{isLogged}}" date="{{lDate}}"></training-data>
 					<training-view trainings="{{tr}}" date="{{lDate}}"></training-view>
+				</paper-material>
+            </section>
+
+            <section data-route="vma-table" tabindex="-1">
+				<paper-material elevation="1" >
+					<vma-view></vma-view>
 				</paper-material>
             </section>
 
