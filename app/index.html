@@ -52,7 +52,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endbuild -->
 
   <!-- Because this project uses vulcanize this should be your only html import
-       in this file. All other imports should go in elements.html -->
+	   in this file. All other imports should go in elements.html -->
   <link rel="import" href="elements/elements.html">
 
 
@@ -71,7 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 	<firebase-app
-    name="athTrain"
+	name="athTrain"
 		auth-domain="athlete-tracking.firebaseapp.com"
 		database-url="https://athlete-tracking.firebaseio.com"
 		api-key="AIzaSyChcr8QiPPCCElm4JWmnPJ3cSRDanVdNxQ">
@@ -81,144 +81,156 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app-name="athTrain"
 	user="{{appUser}}"
 	on-error="onFirebaseError"></firebase-auth>
-    <paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe force-narrow>
-      <!-- Drawer Scroll Header Panel -->
-      <paper-scroll-header-panel drawer fixed>
+	<paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe force-narrow>
+	  <!-- Drawer Scroll Header Panel -->
+	  <paper-scroll-header-panel drawer fixed>
 
-        <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar">
-          <span class="menu-name">Menu</span>
-        </paper-toolbar>
+		<!-- Drawer Toolbar -->
+		<paper-toolbar id="drawerToolbar">
+		  <span class="menu-name">Menu</span>
+		</paper-toolbar>
 
-        <!-- Drawer Content -->
-        <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="home" href="{{baseUrl}}">
-            <iron-icon icon="home"></iron-icon>
-            <span>Accueil</span>
-          </a>
+		<!-- Drawer Content -->
+		<paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
+		  <a data-route="home" href="{{baseUrl}}">
+			<iron-icon icon="home"></iron-icon>
+			<span>Accueil</span>
+		  </a>
 
-          <a data-route="athletes" href="{{baseUrl}}athletes">
-            <iron-icon icon="info"></iron-icon>
-            <span>Athlètes</span>
-          </a>
+		  <a data-route="athletes" href="{{baseUrl}}athletes">
+			<iron-icon icon="maps:directions-run"></iron-icon>
+			<span>Athlètes</span>
+		  </a>
 
-          <a data-route="training-log" href="{{baseUrl}}training-log">
-            <iron-icon icon="book"></iron-icon>
-            <span>Carnet d'entraînement</span>
-          </a>
-
-
-          <a data-route="vma-table" href="{{baseUrl}}vma-table">
-            <iron-icon icon="speed"></iron-icon>
-            <span>Table VMA</span>
-          </a>
+		  <a data-route="training-log" href="{{baseUrl}}training-log">
+			<iron-icon icon="book"></iron-icon>
+			<span>Carnet d'entraînement</span>
+		  </a>
 
 
-          <a data-route="training-log" href="{{baseUrl}}training-log">
-            <iron-icon icon="contact"></iron-icon>
-            <span>Profil</span>
-          </a>
+		  <a data-route="vma-table" href="{{baseUrl}}vma-table">
+			<iron-icon icon="icons:view-list"></iron-icon>
+			<span>Table VMA</span>
+		  </a>
 
 
 
-        </paper-menu>
-      </paper-scroll-header-panel>
+		  <a data-route="my-results" href="{{baseUrl}}my-results">
+			<iron-icon icon="icons:timeline"></iron-icon>
+			<span>Mes résultats</span>
+		  </a>
 
-      <!-- Main Area -->
-      <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
-        <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="small">
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+		  <a data-route="training-log" href="{{baseUrl}}training-log">
+			<iron-icon icon="icons:face"></iron-icon>
+			<span>Profil</span>
+		  </a>
 
-          <span class="space"></span>
 
-          <!-- Toolbar icons
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button> -->
 
-          <!-- Application name -->
-          <div class="middle middle-container">
-            <div class="app-name">Athlete Tracking</div>
-          </div>
+		</paper-menu>
+	  </paper-scroll-header-panel>
 
-          <!-- Application sub title
-          <div class="bottom bottom-container">
-            <div class="bottom-title">The future of coaching</div>
-          </div>-->
-        </paper-toolbar>
+	  <!-- Main Area -->
+	  <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
+		<!-- Main Toolbar -->
+		<paper-toolbar id="mainToolbar" class="small">
+		  <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
 
-        <!-- Main Content -->
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
+		  <span class="space"></span>
 
-            <section data-route="signup" tabindex="-1">
+		  <!-- Toolbar icons
+		  <paper-icon-button icon="refresh"></paper-icon-button>
+		  <paper-icon-button icon="search"></paper-icon-button> -->
 
-              <paper-material elevation="1">
-	<paper-tabs selected="{{selected}}" >
-    	<paper-tab>Inscription</paper-tab>
-    	<paper-tab>Connexion</paper-tab>
+		  <!-- Application name -->
+		  <div class="middle middle-container">
+			<div class="app-name">Athlete Tracking</div>
+		  </div>
 
-	</paper-tabs>
-	<iron-pages selected="{{selected}}">
+		  <!-- Application sub title
+		  <div class="bottom bottom-container">
+			<div class="bottom-title">The future of coaching</div>
+		  </div>-->
+		</paper-toolbar>
 
-            	<x-signup on-logged-in="fbLogin"></x-signup>
-            	<x-signon on-logged-in="fbLogin"></x-signon>
-         </iron-pages>
-         </paper-material>
-            </section>
+		<!-- Main Content -->
+		<div class="content">
+		  <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="home" tabindex="-1">
-              <dashboard-view></dashboard-view>
+			<section data-route="signup" tabindex="-1">
 
-            </section>
+			 	<paper-material elevation="1">
+					<paper-tabs selected="{{selected}}" >
+						<paper-tab>Inscription</paper-tab>
+						<paper-tab>Connexion</paper-tab>
+					</paper-tabs>
 
-            <section data-route="athletes" tabindex="-1">
+					<iron-pages selected="{{selected}}">
+							<x-signup on-logged-in="fbLogin"></x-signup>
+							<x-signon on-logged-in="fbLogin"></x-signon>
+					</iron-pages>
+				</paper-material>
+			</section>
+
+			<section data-route="home" tabindex="-1">
+				<dashboard-view></dashboard-view>
+			</section>
+
+			<section data-route="athletes" tabindex="-1">
 				<paper-material elevation="1" >
 					<athlete-data athletes="{{athletes}}" user="{{isLogged}}"></athlete-data>
-	             	<athlete-view athletes="{{athletes}}" ></athlete-view>
+				 	<athlete-view athletes="{{athletes}}" ></athlete-view>
 				</paper-material>
-            </section>
+			</section>
 
-            <section data-route="training-log" tabindex="-1">
+			<section data-route="training-log" tabindex="-1">
 				<paper-material elevation="1" >
 					<training-data trainings="{{tr}}"  user="{{isLogged}}" date="{{lDate}}"></training-data>
 					<training-view trainings="{{tr}}" date="{{lDate}}"></training-view>
 				</paper-material>
-            </section>
+			</section>
 
-            <section data-route="vma-table" tabindex="-1">
+			<section data-route="vma-table" tabindex="-1">
 				<paper-material elevation="1" >
 					<vma-view></vma-view>
 				</paper-material>
-            </section>
+			</section>
+
+			<section data-route="my-results" tabindex="-1">
+				<paper-material elevation="1" >
+					<h1>Mes Résultats</h1>
+					<result-data athlete="{{appUser.uid}}" results="{{myResults}}"></result-data>
+					<result-view results="{{myResults}}" athlete="{{appUser}}" editable="true"></result-view>
+				</paper-material>
+			</section>
 
 
-          </iron-pages>
-        </div>
-      </paper-scroll-header-panel>
-    </paper-drawer-panel>
+		  </iron-pages>
+		</div>
+	  </paper-scroll-header-panel>
+	</paper-drawer-panel>
 
-    <paper-toast id="toast">
-      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
-    </paper-toast>
+	<paper-toast id="toast">
+	  <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+	</paper-toast>
 
 
-     <paper-toast id="msg" duration="3000"></paper-toast>
+	 <paper-toast id="msg" duration="3000"></paper-toast>
 
-    <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
+	<paper-toast id="caching-complete"
+				 duration="6000"
+				 text="Caching complete! This app will work offline.">
+	</paper-toast>
 
-    <platinum-sw-register auto-register
-                          clients-claim
-                          skip-waiting
-                          base-uri="bower_components/platinum-sw/bootstrap"
-                          on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="fastest"
-                         cache-config-file="cache-config.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
+	<platinum-sw-register auto-register
+						  clients-claim
+						  skip-waiting
+						  base-uri="bower_components/platinum-sw/bootstrap"
+						  on-service-worker-installed="displayInstalledToast">
+	  <platinum-sw-cache default-cache-strategy="fastest"
+						 cache-config-file="cache-config.json">
+	  </platinum-sw-cache>
+	</platinum-sw-register>
 
   </template>
 

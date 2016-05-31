@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
 
 <dom-module id="x-signup">
   <template>
@@ -15,30 +16,29 @@
       }
     </style>
     <span class="page-title"></span>
-    <form  is="iron-form" id="form" >
+    <form  is="iron-form" id="signupForm" on-change="_valid">
 
- <paper-input label="Nom" value="{{name}}" required></paper-input>
- <paper-input label="Email" value="{{email}}" required></paper-input>
- <paper-input label="Mot de passe"  value="{{password}}" type="password"></paper-input><br>
- <paper-checkbox checked="{{isCoach}}">Coach</paper-checkbox><br>
- <paper-checkbox checked="{{isAthlete}}">Athlete</paper-checkbox>
+		<paper-input label="Nom" value="{{name}}" required auto-validate></paper-input>
+		<paper-input label="Email" value="{{email}}" required type="email" auto-validate></paper-input>
+		<paper-input label="Mot de passe"  value="{{password}}" type="password" required auto-validate></paper-input><br>
 
-<div hidden$="{{!isAthlete}}">
- <paper-input label="Date de naissance" value="{{birthDate}}"></paper-input>
- <paper-input label="Licence FFA" value="{{licenceNumber}}"></paper-input>
- <paper-input label="VMA estimée" value="{{speed}}"></paper-input>
- <paper-input label="Taille" value="{{height}}"></paper-input>
- <paper-input label="Poids" value="{{weight}}"></paper-input>
- <paper-input label="Nombre d'entraînements" value="{{availability}}"></paper-input>
+		<paper-checkbox checked="{{isCoach}}">Coach</paper-checkbox>
+		<paper-checkbox checked="{{isAthlete}}">Athlete</paper-checkbox>
+	</form><br>
+	<div hidden$="{{!isAthlete}}">
 
-</div>
+		<form  is="iron-form" id="athForm" on-change="_valid">
+			<paper-input label="Date de naissance" value="{{birthDate}}" type="date" ></paper-input>
+			<paper-input label="Licence FFA" value="{{licenceNumber}}" pattern="[0-9]+[A-Z]?" required auto-validate></paper-input>
+			<paper-input label="VMA estimée" value="{{speed}}"  type="number" auto-validate></paper-input>
+			<paper-input label="Taille" value="{{height}}" pattern="[0-9]\.[0-9][0-9]" auto-validate></paper-input>
+			<paper-input label="Poids" value="{{weight}}" pattern="[0-9]+" auto-validate  type="number"></paper-input>
+			<paper-input label="IMC" value="{{_imc(height, weight)}}" readonly ></paper-input>
+			<paper-input label="Nombre d'entraînements" value="{{availability}}" pattern="[0-9]+" auto-validate></paper-input>
+		</form>
+	</div>
+	<paper-button raised on-tap="signup" disabled="{{!isValid}}">Inscription</paper-button>
 
-
- <paper-button raised on-tap="signup">Inscription</paper-button>
-
-
-
-    </form>
 </template>
 
   <script>
@@ -49,9 +49,19 @@
         is: 'x-signup',
         properties:{
         	email: String,
-        	password: String
+        	password: String,
+        	isValid: {
+        		type: Boolean,
+        		value: false
+        	}
         },
-
+        _valid:function(e){
+        	this.isValid = signupForm.validate() && (this.isAthlete ? athForm.validate() : true);
+        	console.log(this.isValid);
+        },
+        _imc: function(h,w){
+        	return w / (h*h);
+        },
  		signup: function() {
  			//var ref = new Firebase(app.firebaseURL);
  			var name = this.name, email = this.email, pwd = this.password, isAthlete = this.isAthlete,

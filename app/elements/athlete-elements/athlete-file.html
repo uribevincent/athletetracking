@@ -35,7 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		<div>
 
 			<template is="dom-if" if="{{editEnabled}}">
-				<paper-input label="Licence FFA" value="{{athlete.licenceNumber}}"></paper-input>
+				<p>{{athlete.licenceNumber}}</p>
 				<paper-input label="Date de naissance" value="{{athlete.birthDate}}"></paper-input>
 				<paper-input label="Taille" value="{{athlete.height}}"></paper-input>
 				<paper-input label="Poids" value="{{athlete.weight}}"></paper-input>
@@ -67,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			</table>
 		</div>
 		<div>
-			<result-data athlete="{{athlete}}" results="{{results}}"></result-data>
+			<result-data athlete="{{athlete.$key}}" results="{{results}}"></result-data>
 			<result-view results="{{results}}" athlete="{{athlete}}" editable="{{editEnabled}}"></result-view>
 			<!--<athlete-result athlete="{{athlete}}" editEnabled="{{editEnabled}}"></athlete-result>-->
 		</div>

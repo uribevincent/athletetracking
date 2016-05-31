@@ -8,7 +8,7 @@
 
 	<firebase-query
   		app-name="athTrain"
-		path="/results/[[athlete.$key]]"
+		path="/results/[[athlete]]"
 		data="{{fbResults}}">
 	</firebase-query>
 		<!-- Backfill todos from localstorage. This prevents an initial flash while
@@ -45,9 +45,11 @@
 					value: false
 				}
 			},
-			observers: ['_firebaseLoaded(fbResults)'],
+			observers: ['_firebaseLoaded(fbResults)','_changed(athlete)'],
 			// Setup user ref in firebase if auth succeeds
-
+			_changed: function(a){
+				console.log(a);
+			},
 			_firebaseLoaded: function(newData) {
 				//if(this.location){
 					this._firebaseConnected = true;

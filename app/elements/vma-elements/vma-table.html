@@ -3,45 +3,52 @@
 
 
 <dom-module id="vma-table">
+	<style is="custom-style">
+	.scrollable {
+		overflow-x:auto;
+	}
+	</style>
 	<template>
-		<table>
-			<tr>
-				<td>% VMA</td>
-				<td>100m</td>
-				<td>200m</td>
-				<td>300m</td>
-				<td>400m</td>
-				<td>600m</td>
-				<td>800m</td>
-				<td>1000m</td>
-				<td>1500m</td>
-				<td>2000m</td>
-				<td>3000m</td>
-				<td>5000m</td>
-				<td>10km</td>
-				<td>Semi</td>
-				<td>Marathon</td>
-			</tr>
-			<template is="dom-repeat" items="[[table]]">
+		<div class="scrollable">
+			<table>
 				<tr>
-					<td>[[item.percent]]</td>
-					<td>[[item.100.pace]]</td>
-					<td>[[item.200.pace]]</td>
-					<td>[[item.300.pace]]</td>
-					<td>[[item.400.pace]]</td>
-					<td>[[item.600.pace]]</td>
-					<td>[[item.800.pace]]</td>
-					<td>[[item.1000.pace]]</td>
-					<td>[[item.1500.pace]]</td>
-					<td>[[item.2000.pace]]</td>
-					<td>[[item.3000.pace]]</td>
-					<td>[[item.5000.pace]]</td>
-					<td>[[item.10000.pace]]</td>
-					<td>[[item.21100.pace]]</td>
-					<td>[[item.42195.pace]]</td>
+					<td>% VMA</td>
+					<td>100m</td>
+					<td>200m</td>
+					<td>300m</td>
+					<td>400m</td>
+					<td>600m</td>
+					<td>800m</td>
+					<td>1000m</td>
+					<td>1500m</td>
+					<td>2000m</td>
+					<td>3000m</td>
+					<td>5000m</td>
+					<td>10km</td>
+					<td>Semi</td>
+					<td>Marathon</td>
 				</tr>
-			</template>
-		</table>
+				<template is="dom-repeat" items="[[table]]">
+					<tr>
+						<td>[[item.percent]]</td>
+						<td>[[item.100.pace]]</td>
+						<td>[[item.200.pace]]</td>
+						<td>[[item.300.pace]]</td>
+						<td>[[item.400.pace]]</td>
+						<td>[[item.600.pace]]</td>
+						<td>[[item.800.pace]]</td>
+						<td>[[item.1000.pace]]</td>
+						<td>[[item.1500.pace]]</td>
+						<td>[[item.2000.pace]]</td>
+						<td>[[item.3000.pace]]</td>
+						<td>[[item.5000.pace]]</td>
+						<td>[[item.10000.pace]]</td>
+						<td>[[item.21100.pace]]</td>
+						<td>[[item.42195.pace]]</td>
+					</tr>
+				</template>
+			</table>
+		</div>
 	</template>
 	<script>
 		Polymer({
