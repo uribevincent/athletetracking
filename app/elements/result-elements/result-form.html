@@ -95,10 +95,9 @@
 		},
 		addRace: function(){
 			var me = this;
-			var ref = firebase.database().ref(['/results/', app.appUser.uid].join('/'));
 			var raceDate = new Date(me.result.date);
 			var mm = (raceDate.getMonth()+1).toString();
-			var logRef = firebase.database().ref(['/training-log/', app.appUser.uid, raceDate.getFullYear(), (mm[1]?mm:"0"+mm[0])].join('/'));
+
 			var log = {
 					type: 'race',
 					dayNumber: raceDate.getDate(),
@@ -115,17 +114,10 @@
 					position_global: me.result.position_global,
 					position_category: me.result.position_category
 				};
-			if(this.isNew){
-				var newRes = ref.push(res);
-				logRef.child(newRes.key()).update(log);
+			if(!this.isNew){
+				res.key = this.result.$key;
 			}
-			else{
-				ref.child(me.result.$key).set(res);
-				logRef.child(me.result.$key).update(log);
-			}
-			app.displayMessageToast('Résultat enregistré');
-
-			this.fire('close');
+			this.fire('save', {raceDate: raceDate, result: res, log: log, isNew: this.isNew});
 
 		},
 		cancelRace: function(){

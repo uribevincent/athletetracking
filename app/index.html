@@ -71,14 +71,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 	<firebase-app
-	name="athTrain"
 		auth-domain="athlete-tracking.firebaseapp.com"
 		database-url="https://athlete-tracking.firebaseio.com"
 		api-key="AIzaSyChcr8QiPPCCElm4JWmnPJ3cSRDanVdNxQ">
 	</firebase-app>
 
 	<firebase-auth id="auth"
-  app-name="athTrain"
 	user="{{appUser}}"
 	on-error="onFirebaseError"></firebase-auth>
 	<paper-drawer-panel id="paperDrawerPanel"  disableEdgeSwipe disableSwipe force-narrow>
@@ -115,15 +113,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
 
+		  <a data-route="pace-calculator" href="{{baseUrl}}pace-calculator">
+			<iron-icon icon="image:timer"></iron-icon>
+			<span>Allure</span>
+		  </a>
+
+
 		  <a data-route="my-results" href="{{baseUrl}}my-results">
 			<iron-icon icon="icons:timeline"></iron-icon>
 			<span>Mes résultats</span>
 		  </a>
 
-		  <a data-route="training-log" href="{{baseUrl}}training-log">
+		  <a data-route="my-profile" href="{{baseUrl}}my-profile">
 			<iron-icon icon="icons:face"></iron-icon>
-			<span>Profil</span>
+			<span>Mon Profil</span>
 		  </a>
+
 
 
 
@@ -204,6 +209,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				</paper-material>
 			</section>
 
+			<section data-route="my-profile" tabindex="-1">
+				<paper-material elevation="1" >
+					<h1>Profil</h1>
+					<profile-view></profile-view>
+				</paper-material>
+			</section>
+
+			<section data-route="pace-calculator" tabindex="-1">
+				<paper-material elevation="1" >
+					<h1>Calcul d'allure</h1>
+					<pace-calculator></pace-calculator>
+				</paper-material>
+			</section>
 
 		  </iron-pages>
 		</div>

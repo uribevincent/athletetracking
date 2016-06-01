@@ -46,7 +46,7 @@
 			<div class="content">
 				<iron-pages selected="{{selectedPage}}">
 					<result-list results="{{results}}" on-select-result="_selectResult"></result-list>
-					<result-form result="{{selectedResult}}" editable="{{editable}}" on-close="_goList"></result-form>
+					<result-form result="{{selectedResult}}" editable="{{editable}}" on-close="_goList" on-save="_saveResult"></result-form>
 				</iron-pages>
 			</div>
 		</paper-header-panel>
@@ -80,7 +80,21 @@
 				_newResult: function(){
 					this.selectedResult = {};
 					this.selectedPage = 1;
-
+				},
+				_saveResult: function(e){
+					var o = e.detail;
+					var mm = (o.raceDate.getMonth()+1).toString();
+					var ref = firebase.database().ref(['/results/', app.appUser.uid].join('/'));
+					var logRef = firebase.database().ref(['/training-log/', app.appUser.uid, o.raceDate.getFullYear(), (mm[1]?mm:"0"+mm[0])].join('/'));
+					if(o.isNew){
+						var newRes = ref.push(o.result);
+						logRef.child(newRes.key()).update(o.log);
+					}
+					else{
+						ref.child(o.result.key).set(o.result);
+						logRef.child(o.result.key).update(o.log);
+					}
+					app.displayMessageToast('Résultat enregistré');
 				}
 			});
 		})();

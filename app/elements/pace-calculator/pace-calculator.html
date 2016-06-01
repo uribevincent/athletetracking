@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<dom-module id="pace-calculator">
+	<template>
+		<form is="iron-form">
+			<paper-input label="Temps" id="timeInput" type="time" step="1" value="{{time}}" on-focus="_setOrigin"></paper-input>
+			<paper-dropdown-menu label="Distance">
+				<paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{distance}}">
+						<paper-item value="42195" >Marathon</paper-item>
+						<paper-item value="21100" >Semi-marathon</paper-item>
+						<paper-item value="10000" >10 km</paper-item>
+						<paper-item value="5000" >5 km</paper-item>
+						<paper-item value="0" >Autre</paper-item>
+				</paper-listbox>
+			</paper-dropdown-menu>
+			<paper-input label="Mètres" type="number" value="{{distance}}"></paper-input>
+			<paper-input label="Pace" id="paceInput" type="time" step="1" value="{{pace}}" on-focus="_setOrigin"></paper-input>
+			<paper-button on-tap="_compute">Calculer</paper-button>
+		</form>
+	</template>
+	<script>
+		Polymer({
+			is: 'pace-calculator',
+			properties:{
+				distance: {
+					value: null,
+					//observer: '_computeFromDistance'
+				},
+
+				time: {
+					value: '00:00:00',
+					//observer: '_emptyPace'
+				},
+				pace: {
+					value: '00:00:00',
+					//observer: '_emptyTime'
+				},
+			},
+			 _setOrigin: function(e){
+			 	if(e.currentTarget === this.$.timeInput){
+			 		this.origin = 'time';
+			 	}
+			 	else{
+					this.origin = 'pace';
+			 	}
+			},
+			_toSeconds(dStr) {
+				if(!dStr){ dStr = '00:00:00'; }
+				if(dStr.length == 5){ dStr += ':00'; }
+				var h = parseInt(dStr.substr(0,dStr.indexOf(":")));
+				var m = parseInt(dStr.substr(dStr.indexOf(":")+1,2));
+				var s = parseInt(dStr.substr(dStr.indexOf(":")+4,2));
+				return h * 3600 + m * 60 + s;
+			},
+			_compute: function(){
+				if(this.distance && this.origin === 'pace'){
+					var paceInSec = this._toSeconds(this.pace);
+					var secondsAtPace = (paceInSec/ 1000) * this.distance;
+					var h = parseInt(secondsAtPace / 3600);
+					var m = parseInt(secondsAtPace % 3600 / 60);
+					var s = secondsAtPace > 59 ? secondsAtPace % ((3600*h) + (60 * m)) : secondsAtPace;
+					this.time = [
+						h < 10 ? '0' + h: h,
+						m < 10 ? '0' + m: m,
+						s < 10 ? '0' + s: s].join(':');
+				}
+				else{
+
+					if(this.distance && this.origin === 'time'){
+						var t = this._toSeconds(this.time);
+						var p = t / this.distance * 1000;
+						var h = parseInt(p / 3600);
+						var m = parseInt(p % 3600 / 60);
+						var s = p > 59 ? p % ((3600*h) + (60 * m)) : p;
+						this.pace = [
+							h < 10 ? '0' + h: h,
+							m < 10 ? '0' + m: m,
+							s < 10 ? '0' + s: s].join(':');
+					}
+				}
+			}
+
+		});
+	</script>
+</dom-module>
