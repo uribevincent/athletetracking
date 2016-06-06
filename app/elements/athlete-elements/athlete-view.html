@@ -13,7 +13,7 @@
 	<template>
 		<paper-toolbar>
 			<paper-icon-button icon="arrow-back" on-tap="_goList" hidden$="{{!selectedPage}}"></paper-icon-button>
-				<div class="title spacer">Athlètes</div>
+				<div class="title spacer"><h1>Athlètes</h1></div>
 		</paper-toolbar>
 		<iron-pages selected="{{selectedPage}}">
 			<athlete-list athletes="{{athletes}}" on-select-athlete="_selectAthlete"></athlete-list>

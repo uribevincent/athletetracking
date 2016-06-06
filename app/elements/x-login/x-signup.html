@@ -22,8 +22,8 @@
 		<paper-input label="Email" value="{{email}}" required type="email" auto-validate></paper-input>
 		<paper-input label="Mot de passe"  value="{{password}}" type="password" required auto-validate></paper-input><br>
 
-		<paper-checkbox checked="{{isCoach}}">Coach</paper-checkbox>
-		<paper-checkbox checked="{{isAthlete}}">Athlete</paper-checkbox>
+		<paper-checkbox checked="{{isCoach}}" hidden>Coach</paper-checkbox>
+		<paper-checkbox checked="{{isAthlete}}" hidden>Athlete</paper-checkbox>
 	</form><br>
 	<div hidden$="{{!isAthlete}}">
 
@@ -53,6 +53,10 @@
         	isValid: {
         		type: Boolean,
         		value: false
+        	},
+        	isAthlete: {
+        		type: Boolean,
+        		value: true
         	}
         },
         _valid:function(e){

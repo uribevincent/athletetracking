@@ -21,8 +21,8 @@
 				</paper-listbox>
 			</paper-dropdown-menu>
 			<paper-input label="Compétition" value="{{result.name}}" required auto-validate ></paper-input>
-			<paper-input label="Temps officiel" value="{{result.time_official}}" required type="time" step="1" auto-validate></paper-input>
-			<paper-input label="Temps réel" value="{{result.time_real}}" type="time" step="1" ></paper-input>
+			<paper-input label="Temps officiel" value="{{result.time_official}}" required pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" auto-validate></paper-input>
+			<paper-input label="Temps réel" value="{{result.time_real}}" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" step="1" ></paper-input>
 			<paper-input label="Position générale" value="{{result.position_global}}" type="number"
 			required auto-validate pattern="[0-9]+"></paper-input>
 			<paper-input label="Position catégorie" value="{{result.position_category}}" auto-validate pattern="[0-9]+" type="number"></paper-input>
@@ -90,8 +90,18 @@
 			this.isValid = e.currentTarget.parentNode.$.resultForm.validate();
 		},
 		_hasUid: function(r){
-			if(r === null) return;
-			this.isNew = !r.hasOwnProperty('$key') && this.editable;
+			if(r === null) {
+				return;
+			}
+			else{
+				if(!r.time_official){
+					this.result = {
+						time_official: '00:00:00',
+						time_real: '00:00:00'
+					};
+				}
+				this.isNew = !r.hasOwnProperty('$key') && this.editable;
+			}
 		},
 		addRace: function(){
 			var me = this;
